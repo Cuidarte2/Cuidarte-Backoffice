@@ -40,7 +40,7 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-   const token = getTokenFromStorage();
+    const token = getTokenFromStorage();
     if (token) {
       router.replace("../backoffice");
     }
@@ -121,18 +121,24 @@ export default function LoginPage() {
             label="Email"
             name="email"
             type="email"
-            variant="standard"
             value={form.email}
             onChange={handleChange}
             fullWidth
-            error={!!errors.email}
-            helperText={errors.email}
+            sx={{
+              boxShadow: 'none',
+              '& .MuiInput-root': {
+                boxShadow: 'none',
+              },
+              '& input': {
+                boxShadow: 'none',
+              },
+            }}
+
           />
           <TextField
             label="Contraseña"
             name="password"
             type={showPassword ? "text" : "password"}
-            variant="standard"
             value={form.password}
             onChange={handleChange}
             error={!!errors.password}

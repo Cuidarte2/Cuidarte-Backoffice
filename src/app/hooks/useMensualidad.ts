@@ -1,11 +1,13 @@
 "use client";
 import { create } from "zustand";
 import { getTokenFromStorage } from "../utils/auth";
+import { Mensualidad } from "../types/suscripcion";
 
 interface StoreMensualidadState {  
   loading: boolean;
   error: string | null;
   pagarMensualidad: (id: number) => void;
+  fetchMensualidad: (id: number) => Promise<Mensualidad[] | undefined>;
 }
 
 const useMensualidad = create<StoreMensualidadState>((set) => ({
@@ -40,6 +42,37 @@ const useMensualidad = create<StoreMensualidadState>((set) => ({
       });
     }
   },
+   fetchMensualidad: async (idSuscripcion: number) => {
+      set({ loading: true, error: null });
+      try {
+        const token = getTokenFromStorage();
+        if (!token) throw new Error("Usuario no autenticado");
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_CUIDARTE_API_URL}/Mensualidad/ObtenerTodos?idSuscripcion=${idSuscripcion}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-api-key": process.env.NEXT_PUBLIC_CUIDARTE_API_KEY || "",
+              Authorization: `Bearer ${token}`,
+            },
+            redirect: "follow",
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || "Error al obtener mensualidades");
+        }
+        return await response.json();
+
+        
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "Error desconocido",
+          loading: false,
+        });
+      }
+    },
 }))
 
 export default useMensualidad;

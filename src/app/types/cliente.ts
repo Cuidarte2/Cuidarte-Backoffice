@@ -1,3 +1,4 @@
+import { Suscripcion } from "./suscripcion";
 import { TipoPlan } from "./tipoPlan";
 
 export interface Cliente {
@@ -11,6 +12,7 @@ export interface Cliente {
   tipoPlanId: number;
   tipoPlan?: TipoPlan;
   ci: string;
+  suscripcion?: Suscripcion;
 }
 
 export interface ApiCliente {
@@ -32,20 +34,6 @@ export interface ApiCliente {
   ci: string;
 }
 
-export function mapClienteFromApi(apiCliente: ApiCliente): Cliente {
-  return {
-    id: apiCliente.id,
-    nombre: apiCliente.nombreCompleto?.nombre ?? "",
-    apellido: apiCliente.nombreCompleto?.apellido ?? "",
-    fechaNacimiento: new Date(apiCliente.fechaNacimiento),
-    direccion: apiCliente.direccion,
-    telefono: apiCliente.telefono?.value ?? "",
-    tipoPlanId: apiCliente.tipoPlanId  ?? "",
-    tipoPlan: apiCliente.plan  ?? "",
-    ci: apiCliente.ci,
-    email: apiCliente.email?.value
-  };
-}
 
 export function validarCedula(ci: string): boolean {
   const limpia = ci.replace(/\D/g, "").padStart(8, "0");

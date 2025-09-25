@@ -27,7 +27,6 @@ export default function BackofficePage() {
   const { logout } = useUsersStore();
   useEffect(() => {
       const token = getTokenFromStorage();
-      if (!token) throw new Error("Usuario no autenticado");
     if (!token) {
       router.replace("backoffice/login");
     } else {
@@ -40,6 +39,12 @@ export default function BackofficePage() {
     navigator.serviceWorker.register('/sw.js', { scope: '/backoffice/' });
   }
 }, []);
+
+useEffect(() => {
+  if (selectedMenu === 'Logout') {
+    handleLogout()
+  }
+}, [selectedMenu])
 
   const handleLogout = () => {
     logout();
@@ -109,12 +114,10 @@ export default function BackofficePage() {
         {selectedMenu === 'TipoPlan' && <TipoPlanPage />}
         {selectedMenu === 'Equipo' && <EquiposPage />}
         {selectedMenu === 'Empresa' && <EmpresasPage />}
-        {selectedMenu === 'Logout' && (
-          <>
-            {handleLogout()}
-            <Typography variant="h4">Cerrando sesión...</Typography>
-          </>
-        )}
+       {selectedMenu === 'Logout' && (
+  <Typography variant="h4">Cerrando sesión...</Typography>
+)}
+
       </Box>
     </Box>
   );

@@ -83,16 +83,13 @@ export default function TareaForm() {
           Crear tarea
         </Typography>
         <ClienteSelect
-          value={form.cliente?.id ?? 0}
-          onChange={(c) => {
-            if (c) {
-              setForm({ ...form, clienteId: c.id });
-            } else {
-              setForm({ ...form, clienteId: 0 });
-            }
-          }}
-          disabled={false}
-        />
+        value={form.clienteId ?? null}
+        onChange={(c) => {
+        setForm({ ...form, clienteId: c?.id ?? 0 });
+        }}
+        disabled={false}
+/>
+
         <FuncionarioSelect
           value={form.responsableId ?? 0}
           onChange={(f) => setForm({ ...form, responsableId: f.id ?? 0 })}

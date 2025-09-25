@@ -2,6 +2,7 @@ export interface TipoPlan {
     id?: number;
     nombre?: string;
     servicios?: Servicio[]
+    precio?: number;
 }
 
 export interface Servicio {

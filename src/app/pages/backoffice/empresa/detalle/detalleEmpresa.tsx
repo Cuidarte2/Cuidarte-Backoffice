@@ -6,6 +6,9 @@ import TipoPlanSelect from '@/app/components/tipoPlanSelect';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
 import { Empresa } from '@/app/types/empresa';
 import useEmpresas from '@/app/hooks/useEmpresas';
+import useMensualidad from '@/app/hooks/useMensualidad';
+import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
+import { Mensualidad, MensualidadEstado } from '@/app/types/suscripcion';
 
 
 interface Props {
@@ -19,7 +22,10 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...empresa });
   const { update, remove } = useEmpresas();
+  const { pagarMensualidad } = useMensualidad();
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
+  const { fetchMensualidad } = useMensualidad();
+  const [mensualidades, setMensualidades] = useState<Mensualidad[] | null>(null);
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
   };
@@ -30,6 +36,20 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
     }
   }, [tiposPlanes.length,fetchTipoPlan]);
 
+    const onPagarMensualidad = (id: number) => {
+     pagarMensualidad(id);
+  };
+
+ useEffect(() => {
+    const fetchData = async () => {
+      if (empresa.suscripcion?.id) {
+        const result = await fetchMensualidad(empresa.suscripcion.id as number);
+        if (result != undefined) setMensualidades(result);
+      }
+    };
+    fetchData();
+  }, [empresa.suscripcion?.id, fetchMensualidad]);
+
 
   useEffect(() => {
     if (!formData.Plan && formData.Plan && tiposPlanes.length) {
@@ -38,7 +58,7 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
         setFormData((prev) => ({ ...prev, tipoPlan: plan }));
       }
     }
-  }, [formData.Plan, formData.TipoPlanId, tiposPlanes]);
+  }, [formData.Plan, formData.tipoPlanId, tiposPlanes]);
 
   const handleGuardar = () => {
     update(formData);
@@ -49,7 +69,37 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
     remove(id);
     onVolver();
   }
-
+  const columns: GridColDef<Mensualidad>[] = [
+      {
+        field: 'periodoDesde',
+        headerName: 'Periodo desde',
+        width: 150,
+        valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+          params ? new Date(params as string | number | Date).toLocaleDateString() : ''
+      },
+      {
+        field: 'periodoHasta',
+        headerName: 'Periodo hasta',
+        width: 150,
+        valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+          params ? new Date(params as string | number | Date).toLocaleDateString() : ''
+      },
+         {
+      field: 'precio',
+      headerName: 'Monto',
+      width: 150,
+      renderCell: () => {
+        return <span>{tiposPlanes.find((tipo) => tipo.id === empresa.tipoPlanId)?.precio ?? '—'}</span>;
+      }
+    },
+      {
+        field: 'estado',
+        headerName: 'Estado',
+        width: 120,
+        valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+          MensualidadEstado[params] ?? 'Desconocido'
+      },
+    ];
   return (
     <Paper sx={{ width: '100%', height: '100vh', p: 4 }} elevation={3}>
       <Stack direction="row" spacing={2} mb={2}>
@@ -78,14 +128,14 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-        {formData.TipoPlanId && tiposPlanes.length ? (
+        {formData.tipoPlanId && tiposPlanes.length ? (
           <TipoPlanSelect
-            value={formData.TipoPlanId}
+            value={formData.tipoPlanId}
             onChange={(plan) => {
               setFormData({
                 ...formData,
                 Plan: plan,
-                TipoPlanId: plan.id ?? 0
+                tipoPlanId: plan.id ?? 0
               });
             }}
             disabled={!editando}
@@ -103,6 +153,16 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
           fullWidth
           disabled
         />
+         {mensualidades && mensualidades.length > 0 && (
+                  <DataGrid
+                    rows={mensualidades}
+                    columns={columns}
+                    getRowId={row => row.id}
+                    hideFooter
+                    autoHeight
+                    sx={{ border: 0 }}
+                  />
+                )}
       </Stack>
       <Stack direction="row" spacing={2} mt={4}>
         {!editando && (
@@ -123,6 +183,13 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
         >
           Eliminar
         </ConfirmButton>
+          <ConfirmButton
+                  onConfirm={() => onPagarMensualidad(empresa.suscripcion?.id as number)}
+                  confirmText="¿Pagar mensualidad?"
+                  buttonProps={{ variant: "outlined", disabled: editando }}
+                >
+                  Pagar mensualidad
+                </ConfirmButton>
 
         {editando && (
           <>

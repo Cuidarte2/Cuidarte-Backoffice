@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { useState } from 'react';
-import { Cliente } from '@/app/types/cliente';// Asegurate de tener este archivo
+import { Cliente } from '@/app/types/cliente';
 import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
 import {
   Paper,
@@ -75,9 +75,7 @@ const ClientesPage = () => {
       setBusquedaActiva(false);
     }
   };
-
-  useEffect(() => { fetchClientes(page) }, [page, fetchClientes])
-  const pageSize = 10;
+  const pageSize = 20;
   const pageCount = Math.ceil(totalItems / pageSize);
 
   useEffect(() => {
@@ -117,7 +115,7 @@ const ClientesPage = () => {
       headerName: 'Plan',
       width: 150,
       renderCell: (params: { row: Cliente }) => {
-        return <span>{params.row.tipoPlan?.nombre ?? '—'}</span>;
+        return <span>{tiposPlanes.find((tipo) => tipo.id === params.row.tipoPlanId)?.nombre ?? '—'}</span>;
       }
     },
 

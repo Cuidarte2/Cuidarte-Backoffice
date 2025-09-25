@@ -1,12 +1,16 @@
 import { create } from "zustand";
-import { transformarUsuario, Usuario } from "../types/usuario";
+import { Usuario } from "../types/usuario";
 import { getTokenFromStorage } from "../utils/auth";
+import { getUltimosMeses } from "../utils/fecha";
 
 export interface loginUser {
   email: string;
   password: string;
 }
-
+ export interface HorasMes {
+        mes: string;
+        horas: number;
+  }
 interface StoreUserState {
   user: Usuario | null;
   usuarios: Usuario[];
@@ -19,6 +23,7 @@ interface StoreUserState {
   addUsuario: (usuario: Usuario) => void;
   update: (usuario: Usuario) => Promise<void>;
   remove: (id: number) => Promise<void>;
+  fetchHorasMes: (idFuncionario: number) => Promise<HorasMes[] | undefined>;
 }
 
 const useUsersStore = create<StoreUserState>((set) => ({
@@ -130,7 +135,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         const sinDuplicado = state.usuarios.filter(
           (usuario) => usuario.id !== data.id
         );
-        return { usuarios: [...sinDuplicado, transformarUsuario(data)] };
+        return { usuarios: [...sinDuplicado, data] };
       });
     } catch (err) {
       set({
@@ -164,7 +169,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
       const data = await response.json();
       set((state) => ({
         usuarios: state.usuarios.map((user) =>
-          user.id == data.id ? transformarUsuario(data) : user
+          user.id == data.id ? data : user
         ),
       }));
     } catch (err) {
@@ -198,6 +203,45 @@ const useUsersStore = create<StoreUserState>((set) => ({
       set((state) => ({
         usuarios: state.usuarios.filter((usuario) => usuario.id !== id),
       }));
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : "Error desconocido",
+        loading: false,
+      });
+    }
+  },
+  fetchHorasMes: async (idFuncionario: number) => {
+    set({ loading: true, error: null });
+    try {
+      const token = getTokenFromStorage();
+      if (!token) throw new Error("Usuario no autenticado");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_CUIDARTE_API_URL}/Usuario/ObtenerHorasDelMes?idFuncionario=${idFuncionario}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.NEXT_PUBLIC_CUIDARTE_API_KEY || "",
+            Authorization: `Bearer ${token}`,
+          },
+          redirect: "follow",
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Error al obtener mensualidades");
+      }
+      const horas = await response.json();
+      const meses = getUltimosMeses(horas.length);
+
+     
+
+      const resumen: HorasMes[] = horas.map((h: number, i: number) => ({
+        mes: meses[i],
+        horas: h,
+      }));
+
+      return resumen;
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : "Error desconocido",

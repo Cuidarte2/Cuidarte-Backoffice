@@ -93,7 +93,7 @@ const useTareas = create<StoreTareaState>((set, get) => ({
         const tareasActuales = state.tareas[0] ?? [];
         const sinDuplicado = tareasActuales.filter((t) => t.id !== data.id);
         return {
-          pages: {
+          tareas: {
             ...state.tareas,
             [0]: [...sinDuplicado, data],
           },

@@ -1,11 +1,11 @@
 'use client'
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import { Typography, Button, Stack, Box, Collapse, styled, InputBase, alpha, Pagination } from '@mui/material';
-import { ApiTarea, Tarea } from '@/app/types/tareas';
+import { Tarea } from '@/app/types/tareas';
 import TareaDetalle from './detalle/detalleTarea';
 import useTareas from '@/app/hooks/useTareas';
 import TareaForm from './agregar/agregarTarea';
@@ -51,9 +51,8 @@ const TareasPage = () => {
   const [page, setPage] = useState(0)
   const tareasParaGrid = tareas[page] ?? []
   const listaAMostrar = busquedaActiva ? tareasFiltradas : tareasParaGrid;
-  const pageSize = 10;
+  const pageSize = 20;
   const pageCount = Math.ceil(totalItems / pageSize);
-const hasFetchedRef = useRef(false)
   const buscar = () => {
     if (search.trim()) {
       setBusquedaActiva(true);
@@ -62,13 +61,18 @@ const hasFetchedRef = useRef(false)
       setBusquedaActiva(false);
     }
   };
-
 useEffect(() => {
-  if (!hasFetchedRef.current) {
-    fetchTareas(page)
-    hasFetchedRef.current = true
-  }
-}, [])
+  const fetchData = async () => {
+    try {
+      await fetchTareas(page);
+    } catch (err) {
+      console.error("Error al cargar datos:", err);
+    } finally {
+    }
+  };
+
+  fetchData();
+}, [page,fetchTareas,tareas]);
 
 
   const [tareaSeleccionada, setTareaSeleccionada] = useState<Tarea | null>(null);
@@ -84,12 +88,12 @@ useEffect(() => {
   };
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'descripcion', headerName: 'Descripción', flex: 1, minWidth: 180 },
+    { field: 'descripcion', headerName: 'Descripción', flex: 1, minWidth: 220 },
     {
       field: 'estado',
       headerName: 'Estado',
       width: 100,
-      renderCell: (params: { row: ApiTarea }) => {
+      renderCell: (params: { row: Tarea }) => {
         return (
           <span>
             {params.row.estado
@@ -108,14 +112,14 @@ useEffect(() => {
         params ? new Date(params as string | number | Date).toLocaleDateString() : '',
     },
     {
-      field: 'empleadoResponsable',
+      field: 'responsable',
       headerName: 'Responsable',
-      width: 100,
-      renderCell: (params: { row: ApiTarea }) => {
+      width: 250,
+      renderCell: (params: { row: Tarea }) => {
         return (
           <span>
-            {params.row.empleadoResponsable.nombreCompleto
-              ? `${params.row.empleadoResponsable.nombreCompleto.nombre ?? ''} ${params.row.empleadoResponsable.nombreCompleto.apellido ?? ''}`.trim() || '—'
+            {params.row.responsable
+              ? `${params.row.responsable.nombre ?? ''} ${params.row.responsable.apellido ?? ''}`.trim() || '—'
               : '—'}
           </span>
         );
@@ -125,12 +129,12 @@ useEffect(() => {
     {
       field: 'clienteId',
       headerName: 'Cliente',
-      width: 100,
-      renderCell: (params: { row: ApiTarea }) => {
+      width: 250,
+      renderCell: (params: { row: Tarea }) => {
         return (
           <span>
-            {params.row.cliente.nombreCompleto
-              ? `${params.row.cliente.nombreCompleto.nombre ?? ''} ${params.row.cliente.nombreCompleto.apellido ?? ''} ${params.row.cliente.ci ?? ''}`.trim() || '—'
+            {params.row.cliente
+              ? `${params.row.cliente.nombre ?? ''} ${params.row.cliente.apellido ?? ''} ${params.row.cliente.ci ?? ''}`.trim() || '—'
               : '—'}
           </span>
         );

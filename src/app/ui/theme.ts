@@ -46,7 +46,7 @@ const theme = createTheme({
       styleOverrides: {
         input: {
           "&:-webkit-autofill": {
-            boxShadow: "0 0 0 1000px #053b5e inset",
+            boxShadow: "0 0 0 1000px #b2cbdd inset",
             WebkitTextFillColor: "#2B2B2B",
             transition: "background-color 5000s ease-in-out 0s",
           },

@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import { ApiCliente, Cliente, mapClienteFromApi } from "../types/cliente";
+import { Cliente } from "../types/cliente";
 import { getTokenFromStorage } from "../utils/auth";
 
 interface StoreClienteState {
@@ -47,12 +47,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || "Error al obtener clientes");
       }
-      const data: { items: ApiCliente[]; totalItems: number } =
+      const data: { items: Cliente[]; totalItems: number } =
         await response.json();
       set((state) => ({
         clientes: {
           ...state.clientes,
-          [page]: data.items.map(mapClienteFromApi),
+          [page]: data.items,
         },
         loadedPages: new Set(state.loadedPages).add(page),
         totalItems: data.totalItems,
@@ -90,7 +90,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       set((state) => {
         const prevPage0 = state.clientes[0] ?? [];
         const updatedFirstPage = [
-          mapClienteFromApi(data),
+          data,
           ...prevPage0.filter((c) => c.id !== data.id),
         ];
 
@@ -134,7 +134,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       set((state) => {
         const clientePagina = state.clientes[0] ?? [];
         const nuevas = clientePagina.map((t) =>
-          t.id === data.id ? mapClienteFromApi(data) : t
+          t.id === data.id ? data : t
         );
         return {
           clientes: {
@@ -225,8 +225,8 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       }
       const data = await response.json();
       const clientesMap: Cliente[] = [];
-      data.map((c: ApiCliente) => {
-        const cliente = mapClienteFromApi(c);
+      data.map((c: Cliente) => {
+        const cliente = c;
         clientesMap.push(cliente);
       });
 

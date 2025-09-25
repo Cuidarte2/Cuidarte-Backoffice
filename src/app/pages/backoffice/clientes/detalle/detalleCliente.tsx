@@ -9,6 +9,9 @@ import useTipoPlan from '@/app/hooks/useTipoPlan';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
+import useMensualidad from '@/app/hooks/useMensualidad';
+import { Mensualidad, MensualidadEstado } from '@/app/types/suscripcion';
+import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
 
 
 interface Props {
@@ -22,31 +25,28 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...cliente });
   const { update, remove } = useClientes();
+  const { pagarMensualidad, fetchMensualidad } = useMensualidad();
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
+  const [mensualidades, setMensualidades] = useState<Mensualidad[] | null>(null);
+
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
   };
-
-  const handleFechaChange = (value: Date | null) => {
-    if (!value) return;
-
-    const fechaLocal = new Date(value.getTime() + value.getTimezoneOffset() * 60000);
-
-    setFormData((prev) => ({
-      ...prev,
-      fechaNacimiento: fechaLocal,
-    }));
-  };
-
-
 
   useEffect(() => {
     if (tiposPlanes.length === 0) {
       fetchTipoPlan();
     }
-  }, [tiposPlanes.length,fetchTipoPlan]);
-
-
+  }, [tiposPlanes.length, fetchTipoPlan]);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (cliente.suscripcion?.id) {
+        const result = await fetchMensualidad(cliente.suscripcion.id as number);
+        if (result != undefined) setMensualidades(result);
+      }
+    };
+    fetchData();
+  }, [cliente.suscripcion?.id, fetchMensualidad]);
 
   useEffect(() => {
     if (!formData.tipoPlan && formData.tipoPlanId && tiposPlanes.length) {
@@ -61,14 +61,49 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
     update(formData);
     setEditando(false);
   };
-
   const onEliminar = (id: number) => {
     remove(id);
     onVolver();
   }
 
+  const onPagarMensualidad = (id: number) => {
+    pagarMensualidad(id);
+  };
+
+  const columns: GridColDef<Mensualidad>[] = [
+    {
+      field: 'periodoDesde',
+      headerName: 'Periodo desde',
+      width: 150,
+      valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+        params ? new Date(params as string | number | Date).toLocaleDateString() : ''
+    },
+    {
+      field: 'periodoHasta',
+      headerName: 'Periodo hasta',
+      width: 150,
+      valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+        params ? new Date(params as string | number | Date).toLocaleDateString() : ''
+    },
+    {
+      field: 'precio',
+      headerName: 'Monto',
+      width: 150,
+      renderCell: () => {
+        return <span>{tiposPlanes.find((tipo) => tipo.id === cliente.tipoPlanId)?.precio ?? '—'}</span>;
+      }
+    },
+    {
+      field: 'estado',
+      headerName: 'Estado',
+      width: 120,
+      valueGetter: (params: Parameters<GridValueGetter>[0]) =>
+        MensualidadEstado[params] ?? 'Desconocido'
+    },
+  ];
+
   return (
-    <Paper sx={{ width: '100%', height: '100vh', p: 4 }} elevation={3}>
+    <Paper sx={{ width: '100%', minHeight: '100vh', p: 4 }} elevation={3}>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver
@@ -98,13 +133,36 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <DatePicker
             label="Fecha de nacimiento"
-            value={formData.fechaNacimiento}
-            onChange={handleFechaChange}
+            value={formData.fechaNacimiento ? new Date(formData.fechaNacimiento) : null}
+            onChange={(newValue) => {
+              setFormData((prev) => ({ ...prev, fechaNacimiento: newValue ?? null }));
+            }}
+            format="yyyy-MM-dd"
             slotProps={{ textField: { fullWidth: true } }}
             disabled={!editando}
           />
-
+          <DatePicker
+            label="Fecha de inicio mensualidad"
+            value={formData.suscripcion?.fechaInicioMensualidad ? new Date(formData.suscripcion?.fechaInicioMensualidad) : null}
+            onChange={(newValue) => {
+              setFormData((prev) => ({ ...prev, suscripcion: { ...prev.suscripcion, fechaInicioMensualidad: newValue ?? undefined } }));
+            }}
+            format="yyyy-MM-dd"
+            slotProps={{ textField: { fullWidth: true } }}
+            disabled={!editando}
+          />
+          <DatePicker
+            label="Fecha de vencimiento mensualidad"
+            value={formData.suscripcion?.fechaFinMensualidad ? new Date(formData.suscripcion?.fechaFinMensualidad) : null}
+            onChange={(newValue) => {
+              setFormData((prev) => ({ ...prev, suscripcion: { ...prev.suscripcion, fechaFinMensualidad: newValue ?? undefined } }));
+            }}
+            format="yyyy-MM-dd"
+            slotProps={{ textField: { fullWidth: true } }}
+            disabled={!editando}
+          />
         </LocalizationProvider>
+
         <TextField
           label="Dirección"
           type="text"
@@ -121,7 +179,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-             <TextField
+        <TextField
           label="Email"
           type="text"
           value={formData.email ?? ''}
@@ -154,6 +212,16 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled
         />
+        {mensualidades && mensualidades.length > 0 && (
+          <DataGrid
+            rows={mensualidades}
+            columns={columns}
+            getRowId={row => row.id}
+            hideFooter
+            autoHeight
+            sx={{ border: 0 }}
+          />
+        )}
       </Stack>
       <Stack direction="row" spacing={2} mt={4}>
         {!editando && (
@@ -173,6 +241,14 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           buttonProps={{ variant: "outlined", color: "error", disabled: editando }}
         >
           Eliminar
+        </ConfirmButton>
+        <ConfirmButton
+
+          onConfirm={() => onPagarMensualidad(cliente.suscripcion?.id as number)}
+          confirmText="¿Pagar mensualidad?"
+          buttonProps={{ variant: "outlined", disabled: editando }}
+        >
+          Pagar mensualidad
         </ConfirmButton>
 
         {editando && (
@@ -198,7 +274,6 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           </>
         )}
       </Stack>
-
     </Paper>
   );
 }

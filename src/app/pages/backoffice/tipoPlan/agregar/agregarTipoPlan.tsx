@@ -14,11 +14,13 @@ export default function TipoPlanForm() {
   const [apiError, setApiError] = useState<string | null>(null);
   const [form, setForm] = useState<TipoPlan>({
     nombre: '',
+    precio: 0,
     servicios: [],
   });
 
   const [errors, setErrors] = useState({
     nombre: '',
+    precio: '',
   });
   type FormField = keyof typeof form;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +35,7 @@ export default function TipoPlanForm() {
 
     const newErrors = {
       nombre: form.nombre ? "" : "El nombre es requerido.",
+      precio: form.precio ? "" : "El precio es requerido.",
     };
 
     setErrors(newErrors);
@@ -81,6 +84,16 @@ export default function TipoPlanForm() {
           fullWidth
           error={!!errors.nombre}
           helperText={errors.nombre}
+        />
+         <TextField
+          label="Precio"
+          name="precio"
+          variant="standard"
+          value={form.precio}
+          onChange={handleChange}
+          fullWidth
+          error={!!errors.precio}
+          helperText={errors.precio}
         />
         {form.servicios?.map((s, index) => (
           <Box key={index} sx={{ border: '1px solid #ccc', p: 2, borderRadius: 2 }}>

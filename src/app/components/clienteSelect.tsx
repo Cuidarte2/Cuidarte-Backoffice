@@ -52,9 +52,11 @@ export default function ClienteSelect({ value, onChange, disabled }: Props) {
                 options={clientesOptions}
                 getOptionLabel={(c) => `${c.nombre} ${c.apellido} - ${c.ci}`}
                 isOptionEqualToValue={(opt, val) => opt.id === val?.id}
-
-                // Selección
                 value={clienteSeleccionado}
+                onChange={(_, nuevoCliente) => {
+                    setClienteSeleccionado(nuevoCliente);
+                    onChange(nuevoCliente);
+                }}
                 onInputChange={(_, newText, reason) => {
                     if (reason === 'clear') {
                         setClienteSeleccionado(null);

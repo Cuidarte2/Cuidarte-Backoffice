@@ -9,7 +9,6 @@ import { es } from "date-fns/locale";
 import {
   estadoMap,
   EstadoTarea,
-  mapTareaToFormData,
   Tarea,
 } from "@/app/types/tareas";
 import ClienteSelect from "@/app/components/clienteSelect";
@@ -33,9 +32,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
     clientes,
     loadedPages,
     fetchClientes,
-    // ...
   } = useClientes();
-
   useEffect(() => {
     fetchTipoServicios();
   }, [fetchTipoServicios]);
@@ -45,10 +42,9 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
       fetchClientes(0);
     }
   }, [loadedPages, fetchClientes]);
-
   useEffect(() => {
     if (tarea && Object.values(clientes).flat().length) {
-      const form = mapTareaToFormData(tarea);
+      const form = tarea;
       setFormData(form);
     }
   }, [tarea, clientes]);
@@ -141,13 +137,13 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         </Typography>
         {editando ? (
           <>
-            {formData.serviciosUsados?.map((s, index) => (
+            {formData.servicios?.map((s, index) => (
               <Stack key={index} direction="row" spacing={2}>
                 <TipoServicioSelect
                   value={s.tipoServicio?.id || 0}
                   onChange={(id: number) => {
                     const serviciosActualizados = [
-                      ...(formData.serviciosUsados || []),
+                      ...(formData.servicios || []),
                     ];
                     const tipoSeleccionado = tiposServicios.find(
                       (ts) => ts.id === id
@@ -164,7 +160,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                     setFormData({
                       ...formData,
-                      serviciosUsados: serviciosActualizados,
+                      servicios: serviciosActualizados,
                     });
                   }}
                 />
@@ -175,12 +171,12 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   onChange={(e) => {
                     const valor = Math.max(1, Number(e.target.value));
                     const serviciosActualizados = [
-                      ...(formData.serviciosUsados || []),
+                      ...(formData.servicios || []),
                     ];
                     serviciosActualizados[index].cantServicios = valor;
                     setFormData({
                       ...formData,
-                      serviciosUsados: serviciosActualizados,
+                      servicios: serviciosActualizados,
                     });
                   }}
                   error={s.cantServicios < 1}
@@ -192,11 +188,11 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   color="error"
                   onClick={() => {
                     const serviciosActualizados =
-                      formData.serviciosUsados?.filter((_, i) => i !== index) ??
+                      formData.servicios?.filter((_, i) => i !== index) ??
                       [];
                     setFormData({
                       ...formData,
-                      serviciosUsados: serviciosActualizados,
+                      servicios: serviciosActualizados,
                     });
                   }}
                 >
@@ -216,8 +212,8 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                 setFormData({
                   ...formData,
-                  serviciosUsados: [
-                    ...(formData.serviciosUsados ?? []),
+                  servicios: [
+                    ...(formData.servicios ?? []),
                     nuevoServicio,
                   ],
                 });
@@ -229,13 +225,13 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         ) : (
           <>
             <Stack spacing={2}>
-              {formData.serviciosUsados?.length === 0 && (
+              {formData.servicios?.length === 0 && (
                 <Typography color="text.secondary">
                   Esta tarea no tiene servicios asociados.
                 </Typography>
               )}
 
-              {formData.serviciosUsados?.map((servicio, index) => (
+              {formData.servicios?.map((servicio, index) => (
                 <Paper key={index} sx={{ p: 2, backgroundColor: "#f9f9f9" }}>
                   <Typography>
                     <strong>ID tipo servicio:</strong>{" "}
@@ -248,11 +244,6 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                     )?.nombre ?? "Sin nombre"}
                   </Typography>
                   <Typography>Cantidad: {servicio.cantServicios}</Typography>
-
-                  <Typography>
-                    <strong>Precio:</strong> $
-                    {servicio.tipoServicio?.precioHora}
-                  </Typography>
                 </Paper>
               ))}
             </Stack>
@@ -263,13 +254,13 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         </Typography>
         {editando ? (
           <>
-            {formData.serviciosExtras?.map((s, index) => (
+            {formData.serviciosExtra?.map((s, index) => (
               <Stack key={index} direction="row" spacing={2}>
                 <TipoServicioSelect
                   value={s.tipoServicio?.id || 0}
                   onChange={(id: number) => {
                     const serviciosActualizados = [
-                      ...(formData.serviciosExtras || []),
+                      ...(formData.serviciosExtra || []),
                     ];
                     const tipoSeleccionado = tiposServicios.find(
                       (ts) => ts.id === id
@@ -286,7 +277,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                     setFormData({
                       ...formData,
-                      serviciosExtras: serviciosActualizados,
+                      serviciosExtra: serviciosActualizados,
                     });
                   }}
                 />
@@ -297,12 +288,12 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   onChange={(e) => {
                     const valor = Math.max(1, Number(e.target.value));
                     const serviciosActualizados = [
-                      ...(formData.serviciosExtras || []),
+                      ...(formData.serviciosExtra || []),
                     ];
                     serviciosActualizados[index].cantServicios = valor;
                     setFormData({
                       ...formData,
-                      serviciosExtras: serviciosActualizados,
+                      serviciosExtra: serviciosActualizados,
                     });
                   }}
                   error={s.cantServicios < 1}
@@ -314,11 +305,11 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   color="error"
                   onClick={() => {
                     const serviciosActualizados =
-                      formData.serviciosExtras?.filter((_, i) => i !== index) ??
+                      formData.serviciosExtra?.filter((_, i) => i !== index) ??
                       [];
                     setFormData({
                       ...formData,
-                      serviciosExtras: serviciosActualizados,
+                      serviciosExtra: serviciosActualizados,
                     });
                   }}
                 >
@@ -338,8 +329,8 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                 setFormData({
                   ...formData,
-                  serviciosExtras: [
-                    ...(formData.serviciosExtras ?? []),
+                  serviciosExtra: [
+                    ...(formData.serviciosExtra ?? []),
                     nuevoServicio,
                   ],
                 });
@@ -351,13 +342,13 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         ) : (
           <>
             <Stack spacing={2}>
-              {formData.serviciosExtras?.length === 0 && (
+              {formData.serviciosExtra?.length === 0 && (
                 <Typography color="text.secondary">
                   Esta tarea no tiene servicios extra.
                 </Typography>
               )}
 
-              {formData.serviciosExtras?.map((servicio, index) => (
+              {formData.serviciosExtra?.map((servicio, index) => (
                 <Paper key={index} sx={{ p: 2, backgroundColor: "#f9f9f9" }}>
                   <Typography>
                     <strong>ID tipo servicio:</strong>{" "}
@@ -373,7 +364,9 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                   <Typography>
                     <strong>Precio:</strong> $
-                    {servicio.tipoServicio?.precioHora}
+                      {(tiposServicios.find(
+                      (ts) => ts.id === servicio.tipoServicio?.id
+                    )?.precioHora ?? 0) * servicio.cantServicios}
                   </Typography>
                 </Paper>
               ))}
@@ -382,7 +375,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         )}
         <TextField
           label="Costo total"
-          value={formData.costoTotal}
+          value={formData.costo}
           fullWidth
           disabled
         />

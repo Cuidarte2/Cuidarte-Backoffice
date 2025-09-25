@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Paper, Typography, Button, TextField, Stack } from '@mui/material';
 import ConfirmButton from '@/app/components/confirmButton';
 import { Usuario } from '@/app/types/usuario';
-import useUsersStore from '@/app/hooks/useUsersStore';
+import useUsersStore, { HorasMes } from '@/app/hooks/useUsersStore';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 
 interface Props {
@@ -16,11 +17,23 @@ interface Props {
 export default function UsuarioDetalle({ usuario, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...usuario });
-  const { update, remove } = useUsersStore();
+  const { update, remove, fetchHorasMes } = useUsersStore();
+  const [Horas, setHoras] = useState<HorasMes[] | null>(null);
   const [errors, setErrors] = useState<{ email: string; password: string }>({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+     if (usuario.id) {
+      const horas = await fetchHorasMes(usuario.id);
+      setHoras(horas ?? null);
+      }
+    };
+    fetchData();
+  }, [fetchHorasMes,usuario]);
+
 
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
@@ -49,6 +62,12 @@ export default function UsuarioDetalle({ usuario, onVolver }: Props) {
     remove(id);
     onVolver();
   }
+
+    const columns: GridColDef<HorasMes>[] = [
+      { field: 'mes', headerName: 'Mes', width: 250 },
+      { field: 'horas', headerName: 'Horas', width: 250 },
+    ];
+  
 
   return (
     <Paper sx={{ width: '100%', height: '100vh', p: 4 }} elevation={3}>
@@ -117,6 +136,16 @@ export default function UsuarioDetalle({ usuario, onVolver }: Props) {
           fullWidth
           disabled
         />
+          {Horas && Horas.length > 0 && (
+                  <DataGrid
+                    rows={Horas}
+                    columns={columns}
+                    getRowId={row => row.mes}
+                    hideFooter
+                    
+                    sx={{ border: 0 }}
+                  />
+                )}
       </Stack>
       <Stack direction="row" spacing={2} mt={4}>
         {!editando && (

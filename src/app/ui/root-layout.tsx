@@ -11,6 +11,7 @@ export default function ClientLayout({
 }) {
   return (
     <ThemeProvider theme={theme}>
+
       <NavLinks />
       {children}
     </ThemeProvider>
