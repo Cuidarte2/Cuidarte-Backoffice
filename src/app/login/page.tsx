@@ -42,7 +42,7 @@ export default function LoginPage() {
   useEffect(() => {
     const token = getTokenFromStorage();
     if (token) {
-      router.replace("../backoffice");
+      router.replace("..");
     }
   }, [router]);
   const [errors, setErrors] = useState({
@@ -84,7 +84,7 @@ export default function LoginPage() {
             })
           );
         }
-        router.replace("../backoffice");
+        router.replace("..");
       } catch (error) {
         const errorData = error as { statusCode?: number; message?: string };
         if (errorData.statusCode === 500)
