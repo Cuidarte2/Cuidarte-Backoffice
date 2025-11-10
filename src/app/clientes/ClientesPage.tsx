@@ -102,6 +102,7 @@ const ClientesPage = () => {
     { field: 'apellido', headerName: 'Apellido', flex: 1, minWidth: 50 },
     { field: 'ci', headerName: 'CI', flex: 1, minWidth: 140 },
     { field: 'telefono', headerName: 'Teléfono', width: 140 },
+    { field: 'celular', headerName: 'Celular', width: 140 },
     { field: 'email', headerName: 'Email', width: 140 },
     {
       field: 'fechaNacimiento',
@@ -118,7 +119,9 @@ const ClientesPage = () => {
         return <span>{tiposPlanes.find((tipo) => tipo.id === params.row.tipoPlanId)?.nombre ?? '—'}</span>;
       }
     },
-
+    { field: 'responsablePago', headerName: 'Responsable de Pago', width: 180 },
+    { field: 'formaPago', headerName: 'Forma de Pago', width: 150 },
+    { field: 'observaciones', headerName: 'Observaciones', width: 200 },
     {
       field: 'detalle',
       headerName: 'Detalle',

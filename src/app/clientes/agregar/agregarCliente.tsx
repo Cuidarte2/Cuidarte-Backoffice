@@ -20,6 +20,10 @@ export default function ClienteForm() {
     fechaNacimiento: Date | null;
     direccion: string;
     telefono: string;
+    celular: string;
+    responsablePago: string;
+    formaPago: string;
+    observaciones: string;
     tipoPlanId: number;
     ci: string;
   }>({
@@ -30,8 +34,13 @@ export default function ClienteForm() {
     fechaNacimiento: null,
     direccion: '',
     telefono: '',
+    celular: '',
+    responsablePago: '',
+    formaPago: '',
+    observaciones: '',
     tipoPlanId: 0,
     ci: '',
+
   });
 
 
@@ -42,6 +51,10 @@ export default function ClienteForm() {
     fechaNacimiento: "",
     direccion: '',
     telefono: '',
+    celular: '',
+    responsablePago: '',
+    formaPago: '',
+    observaciones: '',
     tipoPlanId: '',
     ci: '',
   });
@@ -76,7 +89,11 @@ export default function ClienteForm() {
       fechaNacimiento: form.fechaNacimiento instanceof Date ? "" : "La fecha es requerida.",
       direccion: form.direccion ? "" : "La dirección es requerida.",
       telefono: form.telefono ? "" : "El teléfono es requerido.",
+      celular: form.celular ? "" : "El celular es requerido.",
       tipoPlanId: form.tipoPlanId ? "" : "El tipo de plan es requerido.",
+      responsablePago: form.responsablePago ? "" : "El responsable de pago es requerido.",
+      observaciones: form.observaciones ? "" : "Las observaciones son requeridas.",
+      formaPago: form.formaPago ? "" : "La forma de pago es requerida.",
       ci:
         !form.ci
           ? "La CI es requerida."
@@ -181,6 +198,16 @@ export default function ClienteForm() {
           error={!!errors.telefono}
           helperText={errors.telefono}
         />
+
+        <TextField
+          label="Celular"
+          name="celular"
+          variant="standard"
+          value={form.celular}
+          onChange={handleChange}
+          error={!!errors.celular}
+          helperText={errors.celular}
+        />
         <DatePicker
           label="Fecha de nacimiento"
           value={form.fechaNacimiento}
@@ -188,6 +215,33 @@ export default function ClienteForm() {
           slotProps={{ textField: { fullWidth: true } }}
         />
 
+        <TextField
+          label="Responsable de Pago"
+          name="responsablePago"
+          variant="standard"
+              value={form.responsablePago}
+          onChange={handleChange}
+          error={!!errors.responsablePago}
+          helperText={errors.responsablePago}
+        />
+        <TextField
+          label="Forma de Pago"
+          name="formaPago"
+          variant="standard"
+              value={form.formaPago}
+          onChange={handleChange}
+          error={!!errors.formaPago}
+          helperText={errors.formaPago}
+        />
+                <TextField
+          label="Observaciones"
+          name="observaciones"
+          variant="standard"
+          value={form.observaciones}
+          onChange={handleChange}
+          error={!!errors.observaciones}
+          helperText={errors.observaciones}
+        />
         <TipoPlanSelect
           value={form.tipoPlanId ?? 0}
           onChange={(plan) => setForm({ ...form, tipoPlanId: plan.id ?? 0 })}

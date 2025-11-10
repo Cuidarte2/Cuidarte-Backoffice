@@ -179,6 +179,38 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
+               <TextField
+          label="Celular"
+          type="text"
+          value={formData.celular ?? ''}
+          onChange={handleChange('celular')}
+          fullWidth
+          disabled={!editando}
+        />
+               <TextField
+          label="Responsable de pago"
+          type="text"
+          value={formData.responsablePago ?? ''}
+          onChange={handleChange('responsablePago')}
+          fullWidth
+          disabled={!editando}
+        />
+               <TextField
+          label="Forma de pago"
+          type="text"
+          value={formData.formaPago ?? ''}
+          onChange={handleChange('formaPago')}
+          fullWidth
+          disabled={!editando}
+        />
+               <TextField
+          label="Observaciones"
+          type="text"
+          value={formData.observaciones ?? ''}
+          onChange={handleChange('observaciones')}
+          fullWidth
+          disabled={!editando}
+        />
         <TextField
           label="Email"
           type="text"

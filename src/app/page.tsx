@@ -18,6 +18,7 @@ import EmpresasPage from "./empresa/EmpresaPage";
 import { useRouter } from "next/navigation";
 import { getTokenFromStorage } from "@/app/utils/auth";
 import useUsersStore from "@/app/hooks/useUsersStore";
+import FondoPortadaPage from "./fondoPortada/FondoPortadaPage";
 export default function BackofficePage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -74,7 +75,7 @@ useEffect(() => {
           }}
         >
           <List>
-            {['Tareas', 'Clientes', 'Equipo', 'TipoPlan', 'TipoServicio','Empresa', 'Logout'].map((item) => (
+            {['Tareas', 'Clientes', 'Equipo', 'TipoPlan', 'TipoServicio','Empresa', 'Fondo Portada', 'Logout'].map((item) => (
               <ListItem key={item} disablePadding>
                 <ListItemButton onClick={() => setSelectedMenu(item)}>
                   <ListItemIcon>
@@ -90,7 +91,9 @@ useEffect(() => {
                       <DashboardIcon />
                     ) : item === 'Empresa' ? (
                       <ApartmentIcon />
-                    ) : (
+                    ) : item === 'Fondo Portada' ? (
+                      <ApartmentIcon />
+                    )  : (
                       <LogoutIcon />
                     )}
                   </ListItemIcon>
@@ -114,6 +117,7 @@ useEffect(() => {
         {selectedMenu === 'TipoPlan' && <TipoPlanPage />}
         {selectedMenu === 'Equipo' && <EquiposPage />}
         {selectedMenu === 'Empresa' && <EmpresasPage />}
+        {selectedMenu === 'Fondo Portada' && <FondoPortadaPage />}
        {selectedMenu === 'Logout' && (
   <Typography variant="h4">Cerrando sesión...</Typography>
 )}

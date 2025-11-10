@@ -9,29 +9,14 @@ export interface Cliente {
   fechaNacimiento?: Date | null;
   direccion?: string;
   telefono: string;
+  celular?: string;
   tipoPlanId: number;
   tipoPlan?: TipoPlan;
   ci: string;
+  responsablePago: string;
+  formaPago: string;
+  observaciones: string;
   suscripcion?: Suscripcion;
-}
-
-export interface ApiCliente {
-  id: number;
-  nombreCompleto?: {
-    nombre: string;
-    apellido: string;
-  };
-  fechaNacimiento: string;
-  direccion: string;
-  telefono?: {
-    value: string;
-  };
-  email?: {
-    value: string;
-  };
-  tipoPlanId: number;
-  plan: TipoPlan;
-  ci: string;
 }
 
 
