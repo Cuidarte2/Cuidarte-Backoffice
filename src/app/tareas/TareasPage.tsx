@@ -65,6 +65,7 @@ useEffect(() => {
   const fetchData = async () => {
     try {
       await fetchTareas(page);
+      console.log("Tareas cargadas:", tareas);
     } catch (err) {
       console.error("Error al cargar datos:", err);
     } finally {
@@ -94,6 +95,7 @@ useEffect(() => {
       headerName: 'Estado',
       width: 100,
       renderCell: (params: { row: Tarea }) => {
+        
         return (
           <span>
             {params.row.estado

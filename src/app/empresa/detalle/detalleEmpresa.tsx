@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Paper, Typography, Button, TextField, Stack } from '@mui/material';
+import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from '@mui/material';
 import ConfirmButton from '@/app/components/confirmButton';
 import TipoPlanSelect from '@/app/components/tipoPlanSelect';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
@@ -21,7 +21,9 @@ interface Props {
 export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...empresa });
-  const { update, remove } = useEmpresas();
+  const { update, remove, error } = useEmpresas();
+    const [apiError, setApiError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const { pagarMensualidad } = useMensualidad();
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
   const { fetchMensualidad } = useMensualidad();
@@ -29,6 +31,19 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
   };
+
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setApiError(typeof error === 'string' ? error : 'Ocurrió un error inesperado');
+      setOpen(true);
+
+    }
+  }, [error]);
 
   useEffect(() => {
     if (tiposPlanes.length === 0) {
@@ -102,6 +117,11 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
     ];
   return (
     <Paper sx={{ width: '100%', height: '100vh', p: 4 }} elevation={3}>
+       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                {apiError}
+              </Alert>
+            </Snackbar>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver

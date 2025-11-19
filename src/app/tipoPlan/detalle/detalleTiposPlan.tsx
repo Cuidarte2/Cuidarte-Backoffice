@@ -1,11 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Paper, Typography, Button, TextField, Stack } from '@mui/material';
+import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from '@mui/material';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
 import ConfirmButton from '@/app/components/confirmButton';
-import { TipoPlan } from '@/app/types/tipoPlan';
+import { destinoMap, PlanDestino, TipoPlan } from '@/app/types/tipoPlan';
 import TipoServicioSelect from '@/app/components/tipoServicioSelect';
 import useTipoServicio from '@/app/hooks/useTipoServicio';
+import PlanDestinoSelect from '@/app/components/planDestinoSelect';
 
 interface Props {
   ts: TipoPlan;
@@ -17,18 +18,33 @@ interface Props {
 export default function TipoPlanDetalle({ ts, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...ts });
-  const { update, remove } = useTipoPlan();
+  const { update, remove, error } = useTipoPlan();
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const { tiposServicios, fetchTipoServicios: fetch } = useTipoServicio();
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
   };
+
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setApiError(typeof error === 'string' ? error : 'Ocurrió un error inesperado');
+      setOpen(true);
+
+    }
+  }, [error]);
 
 
   useEffect(() => {
     if (tiposServicios.length === 0) {
       fetch();
     }
-  }, [tiposServicios.length,fetch]);
+  }, [tiposServicios.length, fetch]);
 
 
   const handleGuardar = () => {
@@ -43,6 +59,11 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
 
   return (
     <Paper sx={{ width: '100%', minHeight: '100vh', p: 4 }} elevation={3}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {apiError}
+        </Alert>
+      </Snackbar>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver
@@ -61,12 +82,21 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-              <TextField
+        <TextField
           label="Precio"
           value={formData.precio}
           onChange={handleChange('precio')}
           fullWidth
           disabled={!editando}
+        />
+        <PlanDestinoSelect
+          value={
+                    typeof formData.destino === "string"
+                      ? destinoMap[formData.destino] ?? PlanDestino.Cliente
+                      : formData.destino ?? PlanDestino.Cliente
+                  }
+                  onChange={(e) => setFormData({ ...formData, destino: e })}
+                  disabled={!editando}
         />
         <Typography variant="h6" mt={4}>Servicios asociados</Typography>
         {editando ? (
@@ -78,7 +108,7 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
                   value={s.tipoServicio?.id || 0}
                   onChange={(id: number) => {
                     const serviciosActualizados = [...formData.servicios || []];
-                     const tipoSeleccionado = tiposServicios.find(ts => ts.id === id);
+                    const tipoSeleccionado = tiposServicios.find(ts => ts.id === id);
                     if (serviciosActualizados[index].tipoServicio) {
                       serviciosActualizados[index].tipoServicio.id = id;
                       serviciosActualizados[index].tipoServicio = tipoSeleccionado ?? {
@@ -107,9 +137,6 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
 
                   sx={{ width: 120 }}
                 />
-
-
-
 
                 <Button color="error" onClick={() => {
                   const serviciosActualizados = formData.servicios?.filter((_, i) => i !== index) ?? [];

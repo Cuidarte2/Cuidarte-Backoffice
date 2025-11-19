@@ -128,6 +128,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        console.log(errorData);
         throw new Error(errorData.message || "Error al editar el cliente");
       }
       const data = await response.json();

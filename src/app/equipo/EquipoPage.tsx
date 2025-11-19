@@ -27,7 +27,7 @@ const EquiposPage = () => {
     if (didFetchRef.current) return;  
     didFetchRef.current = true;      
     fetchUsuarios();                 
-  }, []);                             
+  }, [fetchUsuarios]);                             
 
 
 

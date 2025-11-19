@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Paper, Typography, Button, TextField, Stack } from "@mui/material";
+import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from "@mui/material";
 import ConfirmButton from "@/app/components/confirmButton";
 import useClientes from "@/app/hooks/useClientes";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -26,7 +26,9 @@ interface Props {
 export default function ClienteDetalle({ tarea, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...tarea });
-  const { update, remove } = useTareas();
+  const { update, remove, error } = useTareas();
+    const [apiError, setApiError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const { tiposServicios, fetchTipoServicios } = useTipoServicio();
   const {
     clientes,
@@ -36,6 +38,20 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
   useEffect(() => {
     fetchTipoServicios();
   }, [fetchTipoServicios]);
+
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (error) {
+      setApiError(typeof error === 'string' ? error : 'Ocurrió un error inesperado');
+      setOpen(true);
+
+    }
+  }, [error]);
+
 
   useEffect(() => {
     if (!loadedPages.has(0)) {
@@ -66,6 +82,11 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
   };
   return (
     <Paper sx={{ width: "100%", minHeight: "100vh", p: 4 }} elevation={3}>
+       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                {apiError}
+              </Alert>
+            </Snackbar>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver

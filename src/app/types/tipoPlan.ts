@@ -3,6 +3,7 @@ export interface TipoPlan {
     nombre?: string;
     servicios?: Servicio[]
     precio?: number;
+    destino? : PlanDestino;
 }
 
 export interface Servicio {
@@ -20,3 +21,16 @@ export interface TipoServicio {
     precioHora?: number;
     
 }
+
+	export enum PlanDestino
+	{
+		Cliente = 0,
+		Empresa = 1,
+	}
+
+
+    export const destinoMap: Record<string, PlanDestino> = {
+      Cliente: PlanDestino.Cliente,
+      Empresa: PlanDestino.Empresa,   
+    };
+    

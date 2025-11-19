@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography, useMediaQuery } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import GroupIcon from '@mui/icons-material/Group';
@@ -8,6 +8,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
+import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import { useTheme } from "@mui/material/styles";
 import TipoServicioPage from "./tipoServicio/TipoServicioPage";
 import TareasPage from "./tareas/TareasPage";
@@ -41,16 +42,17 @@ export default function BackofficePage() {
   }
 }, []);
 
+  const handleLogout = useCallback(() => {
+    logout();
+    router.replace("/login");
+  }, [logout, router]);
+
 useEffect(() => {
   if (selectedMenu === 'Logout') {
     handleLogout()
   }
-}, [selectedMenu])
+}, [selectedMenu, handleLogout]);
 
-  const handleLogout = () => {
-    logout();
-    router.replace("/login");
-  };
 
   if (loading) return null;
   return (
@@ -92,7 +94,7 @@ useEffect(() => {
                     ) : item === 'Empresa' ? (
                       <ApartmentIcon />
                     ) : item === 'Fondo Portada' ? (
-                      <ApartmentIcon />
+                      <PhotoSizeSelectActualIcon />
                     )  : (
                       <LogoutIcon />
                     )}

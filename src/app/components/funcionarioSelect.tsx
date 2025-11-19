@@ -18,7 +18,7 @@ export default function FuncionarioSelect({ value, onChange, disabled }: Props) 
     if (didFetchRef.current) return;  
     didFetchRef.current = true;      
     fetchUsuarios();                 
-  }, []);                             
+  }, [fetchUsuarios]);                             
 
 
     return (

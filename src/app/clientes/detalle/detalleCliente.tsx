@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Paper, Typography, Button, TextField, Stack } from '@mui/material';
+import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from '@mui/material';
 import ConfirmButton from '@/app/components/confirmButton';
 import { Cliente } from '@/app/types/cliente';
 import useClientes from '@/app/hooks/useClientes';
@@ -13,25 +13,31 @@ import useMensualidad from '@/app/hooks/useMensualidad';
 import { Mensualidad, MensualidadEstado } from '@/app/types/suscripcion';
 import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
 
-
 interface Props {
   cliente: Cliente;
   onVolver: () => void;
 
 }
 
-
 export default function ClienteDetalle({ cliente, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...cliente });
-  const { update, remove } = useClientes();
+  const { update, remove, error } = useClientes();
+  const [apiError, setApiError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const { pagarMensualidad, fetchMensualidad } = useMensualidad();
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
   const [mensualidades, setMensualidades] = useState<Mensualidad[] | null>(null);
-
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [field]: event.target.value });
   };
+
+  useEffect(() => {
+    if (error) {
+      setApiError(typeof error === 'string' ? error : 'Ocurrió un error inesperado');
+      setOpen(true);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (tiposPlanes.length === 0) {
@@ -101,9 +107,19 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
         MensualidadEstado[params] ?? 'Desconocido'
     },
   ];
+  const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpen(false);
+  };
 
   return (
     <Paper sx={{ width: '100%', minHeight: '100vh', p: 4 }} elevation={3}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {apiError}
+        </Alert>
+      </Snackbar>
+
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver
@@ -179,7 +195,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-               <TextField
+        <TextField
           label="Celular"
           type="text"
           value={formData.celular ?? ''}
@@ -187,7 +203,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-               <TextField
+        <TextField
           label="Responsable de pago"
           type="text"
           value={formData.responsablePago ?? ''}
@@ -195,7 +211,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-               <TextField
+        <TextField
           label="Forma de pago"
           type="text"
           value={formData.formaPago ?? ''}
@@ -203,7 +219,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-               <TextField
+        <TextField
           label="Observaciones"
           type="text"
           value={formData.observaciones ?? ''}

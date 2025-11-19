@@ -8,6 +8,7 @@ import { es } from 'date-fns/locale';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
 import { Servicio, TipoPlan } from '@/app/types/tipoPlan';
 import TipoServicioSelect from '@/app/components/tipoServicioSelect';
+import PlanDestinoSelect from '@/app/components/planDestinoSelect';
 
 export default function TipoPlanForm() {
   const { add } = useTipoPlan();
@@ -16,11 +17,13 @@ export default function TipoPlanForm() {
     nombre: '',
     precio: 0,
     servicios: [],
+    destino: 0,
   });
 
   const [errors, setErrors] = useState({
     nombre: '',
     precio: '',
+    destino: '',
   });
   type FormField = keyof typeof form;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +39,7 @@ export default function TipoPlanForm() {
     const newErrors = {
       nombre: form.nombre ? "" : "El nombre es requerido.",
       precio: form.precio ? "" : "El precio es requerido.",
+      destino: form.destino ? "" : "El destino es requerido.",
     };
 
     setErrors(newErrors);
@@ -94,6 +98,11 @@ export default function TipoPlanForm() {
           fullWidth
           error={!!errors.precio}
           helperText={errors.precio}
+        />
+        <PlanDestinoSelect
+          value={form.destino!}
+          onChange={(value) => setForm({ ...form, destino: value })}
+          disabled={false}
         />
         {form.servicios?.map((s, index) => (
           <Box key={index} sx={{ border: '1px solid #ccc', p: 2, borderRadius: 2 }}>

@@ -38,6 +38,21 @@ const TipoPlanPage = () => {
     { field: 'nombre', headerName: 'Nombre', flex: 1, minWidth: 120 },
     { field: 'precio', headerName: 'Precio', flex: 1, minWidth: 120 },
     {
+        field: 'Destino',
+        headerName: 'Destino',
+        width: 100,
+        renderCell: (params: { row: TipoPlan }) => {
+          return (
+            <span>
+              {params.row.destino
+                ? `${params.row.destino ?? ''}` || '—'
+                : '—'}
+            </span>
+          );
+   
+        }
+       },
+    {
       field: 'detalle',
       headerName: 'Detalle',
       width: 140,
