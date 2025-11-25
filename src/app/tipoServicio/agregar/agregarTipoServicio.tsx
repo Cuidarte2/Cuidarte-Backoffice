@@ -85,7 +85,7 @@ export default function TipoServicioForm() {
           helperText={errors.nombre}
         />
         <TextField
-          label="Precio por hora"
+          label="precio por hora"
           name="precioHora"
           variant="standard"
           value={form.precioHora}

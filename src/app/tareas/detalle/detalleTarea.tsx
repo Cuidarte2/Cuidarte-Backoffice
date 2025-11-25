@@ -384,7 +384,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   <Typography>Cantidad: {servicio.cantServicios}</Typography>
 
                   <Typography>
-                    <strong>Precio:</strong> $
+                    <strong>precio:</strong> $
                       {(tiposServicios.find(
                       (ts) => ts.id === servicio.tipoServicio?.id
                     )?.precioHora ?? 0) * servicio.cantServicios}

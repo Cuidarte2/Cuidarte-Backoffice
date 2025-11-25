@@ -8,7 +8,7 @@ export interface TipoPlan {
 
 export interface Servicio {
     id?: number;
-    tipoServicio?: TipoServicio;
+    tipoServicio: TipoServicio;
     cantServicios: number;
     
 }

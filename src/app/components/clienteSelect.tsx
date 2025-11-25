@@ -15,7 +15,7 @@ export default function ClienteSelect({ value, onChange, disabled }: Props) {
     const [inputValue, setInputValue] = useState('');
     const [clientesOptions, setClientesOptions] = useState<Cliente[]>([]);
 
-    const { getClienteByTexto, getClienteById } = useClientes();
+    const { getClienteByTexto, getClienteById, setClienteHook } = useClientes();
     const debouncedInput = useDebounce(inputValue, 500);
     useEffect(() => {
         if (value == null) {
@@ -56,6 +56,7 @@ export default function ClienteSelect({ value, onChange, disabled }: Props) {
                 onChange={(_, nuevoCliente) => {
                     setClienteSeleccionado(nuevoCliente);
                     onChange(nuevoCliente);
+                      setClienteHook(nuevoCliente);
                 }}
                 onInputChange={(_, newText, reason) => {
                     if (reason === 'clear') {

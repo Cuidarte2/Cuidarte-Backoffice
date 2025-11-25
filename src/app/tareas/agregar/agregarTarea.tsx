@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { TextField, Button, Box, Snackbar, Typography, Stack } from '@mui/material';
+import { TextField, Button, Box, Snackbar, Typography, Stack, Chip } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import useTareas from '@/app/hooks/useTareas';
@@ -11,10 +11,44 @@ import TipoServicioSelect from '@/app/components/tipoServicioSelect';
 import { Tarea } from '@/app/types/tareas';
 import { GridDeleteIcon } from '@mui/x-data-grid';
 import { Servicio } from '@/app/types/tipoPlan';
+import useClientes from '@/app/hooks/useClientes';
+import useTipoServicio from '@/app/hooks/useTipoServicio';
 
 export default function TareaForm() {
   const { addTarea } = useTareas();
+  const { cliente } = useClientes();
+    const { tiposServicios } = useTipoServicio();
   const [apiError, setApiError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+
+  const aplicarConsumoServicios = (serviciosSolicitados: Servicio[]) => {
+    if (!cliente || !serviciosSolicitados) return;
+
+    let nuevoTotal = 0;
+    const clienteServicios = cliente.serviciosDisponibles.map(s => ({...s}));
+    serviciosSolicitados.forEach((solicitado) => {
+      if (solicitado.cantServicios <= 0 || !solicitado.tipoServicio) return;
+      const precio = solicitado.tipoServicio.precioHora ?? 0;
+      const disponible = clienteServicios.find(
+        (s) => s.tipoServicio.id === solicitado.tipoServicio.id
+      );
+      if (!disponible || disponible.cantServicios === 0) {
+        nuevoTotal += solicitado.cantServicios * precio;
+        return;
+      }
+      if (disponible.cantServicios >= solicitado.cantServicios) {
+        disponible.cantServicios -= solicitado.cantServicios;
+      } else {
+        const cubierto = disponible.cantServicios;
+        const excedente = solicitado.cantServicios - cubierto;
+        disponible.cantServicios = 0;
+        nuevoTotal += excedente * precio;
+      }
+    });
+
+    setTotal(nuevoTotal);
+  };
+
   const [form, setForm] = useState<Tarea>({
     clienteId: 0,
     responsableId: 0,
@@ -66,7 +100,6 @@ export default function TareaForm() {
       }
     }
   };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
       {apiError && (
@@ -83,12 +116,12 @@ export default function TareaForm() {
           Crear tarea
         </Typography>
         <ClienteSelect
-        value={form.clienteId ?? null}
-        onChange={(c) => {
-        setForm({ ...form, clienteId: c?.id ?? 0 });
-        }}
-        disabled={false}
-/>
+          value={form.clienteId ?? null}
+          onChange={(c) => {
+            setForm({ ...form, clienteId: c?.id ?? 0 });
+          }}
+          disabled={false}
+        />
 
         <FuncionarioSelect
           value={form.responsableId ?? 0}
@@ -122,7 +155,8 @@ export default function TareaForm() {
                 value={s.tipoServicio?.id ?? 0}
                 onChange={(id) => {
                   const updated = [...form.servicios || []];
-                  updated[index].tipoServicio = { id };
+                  const tipo = tiposServicios.find(ts => ts.id === id);
+                  updated[index].tipoServicio = tipo ?? { id, precioHora: 0 };
                   setForm({ ...form, servicios: updated });
                 }}
               />
@@ -134,6 +168,8 @@ export default function TareaForm() {
                   const updated = [...form.servicios || []];
                   updated[index].cantServicios = Number(e.target.value);
                   setForm({ ...form, servicios: updated });
+                  aplicarConsumoServicios(updated);
+
                 }}
                 sx={{ mt: 2 }}
               />
@@ -158,7 +194,7 @@ export default function TareaForm() {
               {
                 id: 0,
                 cantServicios: 0,
-                tipoServicio: { id: 0 },
+                tipoServicio: { id: 0, precioHora: 0 },
               } satisfies Servicio
             ];
             setForm({ ...form, servicios: nuevos });
@@ -167,6 +203,18 @@ export default function TareaForm() {
 
           + Agregar servicio
         </Button>
+        {total > 0 && (
+  <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+    <Chip
+      label={`Total extra: ${total.toLocaleString('es-UY', { style: 'currency', currency: 'UYU' })}`}
+      color="success"
+      variant="outlined"
+      sx={{ fontWeight: 'bold', fontSize: '1rem', px: 2 }}
+    />
+  </Box>
+)}
+
+
         <Button type="submit" variant="contained">Guardar Tarea</Button>
       </Box>
     </LocalizationProvider>

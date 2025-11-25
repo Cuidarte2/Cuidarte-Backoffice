@@ -36,7 +36,7 @@ const TipoPlanPage = () => {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'nombre', headerName: 'Nombre', flex: 1, minWidth: 120 },
-    { field: 'precio', headerName: 'Precio', flex: 1, minWidth: 120 },
+    { field: 'precio', headerName: 'precio', flex: 1, minWidth: 120 },
     {
         field: 'Destino',
         headerName: 'Destino',

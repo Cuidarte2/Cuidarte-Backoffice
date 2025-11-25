@@ -9,9 +9,11 @@ import useTipoPlan from '@/app/hooks/useTipoPlan';
 import { Servicio, TipoPlan } from '@/app/types/tipoPlan';
 import TipoServicioSelect from '@/app/components/tipoServicioSelect';
 import PlanDestinoSelect from '@/app/components/planDestinoSelect';
+import useTipoServicio from '@/app/hooks/useTipoServicio';
 
 export default function TipoPlanForm() {
   const { add } = useTipoPlan();
+  const {tiposServicios} = useTipoServicio();
   const [apiError, setApiError] = useState<string | null>(null);
   const [form, setForm] = useState<TipoPlan>({
     nombre: '',
@@ -90,7 +92,7 @@ export default function TipoPlanForm() {
           helperText={errors.nombre}
         />
          <TextField
-          label="Precio"
+          label="precio"
           name="precio"
           variant="standard"
           value={form.precio}
@@ -110,8 +112,9 @@ export default function TipoPlanForm() {
               <TipoServicioSelect
                 value={s.tipoServicio?.id ?? 0}
                 onChange={(id) => {
+                  const tipo = tiposServicios.find(ts => ts.id === id)
                   const updated = [...form.servicios || []];
-                  updated[index].tipoServicio = { id };
+                  updated[index].tipoServicio = { id, nombre: tipo?.nombre || ''};
                   setForm({ ...form, servicios: updated });
                 }}
               />

@@ -19,7 +19,6 @@ subscription?: Suscripcion;
 fechaGeneracion: Date;
 periodoDesde: Date;
 periodoHasta: Date;
-monto: number;
 estado: MensualidadEstado;
 }
 export enum MensualidadEstado {

@@ -38,7 +38,7 @@ const TipoServicioPage = () => {
     { field: 'nombre', headerName: 'Nombre', flex: 1, minWidth: 120 },
     {
       field: 'precioHora',
-      headerName: 'Precio por hora',
+      headerName: 'precio por hora',
       width: 140,
       valueGetter: (params) =>
         params !== undefined && params !== null

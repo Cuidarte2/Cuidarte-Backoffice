@@ -5,6 +5,7 @@ import { getTokenFromStorage } from "../utils/auth";
 
 interface StoreClienteState {
   clientes: Record<number, Cliente[]>;
+  cliente: Cliente | null;
   clientesFiltradas: Cliente[];
   totalItems: number;
   loading: boolean;
@@ -14,12 +15,14 @@ interface StoreClienteState {
   addCliente: (cliente: Cliente) => void;
   getClienteById: (id: number) => Cliente | undefined;
   getClienteByTexto: (valor: string) => Promise<Cliente[]>;
+  setClienteHook: (cliente: Cliente | null) => void;
   update: (cliente: Cliente) => Promise<void>;
   remove: (id: number) => Promise<void>;
 }
 
 const useClientes = create<StoreClienteState>((set, get) => ({
   clientes: {},
+  cliente: null,
   loading: false,
   error: null,
   clientesFiltradas: [],
@@ -128,7 +131,6 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.log(errorData);
         throw new Error(errorData.message || "Error al editar el cliente");
       }
       const data = await response.json();
@@ -197,7 +199,10 @@ const useClientes = create<StoreClienteState>((set, get) => ({
 
     for (const clientesPagina of Object.values(pages)) {
       const cliente = clientesPagina.find((c) => c.id === id);
-      if (cliente) return cliente;
+      if (cliente){
+        set({ cliente: cliente });
+        return cliente;
+      } 
     }
 
     return undefined;
@@ -241,6 +246,9 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       return [];
     }
   },
+  setClienteHook: (cliente: Cliente | null) => {
+    set({ cliente:cliente });
+  }
 }));
 
 export default useClientes;

@@ -1,5 +1,5 @@
 import { Suscripcion } from "./suscripcion";
-import { TipoPlan } from "./tipoPlan";
+import { Servicio, TipoPlan } from "./tipoPlan";
 
 export interface Cliente {
   id: number;
@@ -17,6 +17,7 @@ export interface Cliente {
   formaPago: string;
   observaciones: string;
   suscripcion?: Suscripcion;
+  serviciosDisponibles: Servicio[];
 }
 
 

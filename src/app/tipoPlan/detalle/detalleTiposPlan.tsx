@@ -83,7 +83,7 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
           disabled={!editando}
         />
         <TextField
-          label="Precio"
+          label="precioHora"
           value={formData.precio}
           onChange={handleChange('precio')}
           fullWidth
@@ -184,7 +184,7 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
                     Cantidad: {servicio.cantServicios}
                   </Typography>
 
-                  <Typography><strong>Precio:</strong>  ${tiposServicios.find(ts => ts.id === servicio.tipoServicio?.id)?.precioHora ?? 0}</Typography>
+                  <Typography><strong>precio:</strong>  ${tiposServicios.find(ts => ts.id === servicio.tipoServicio?.id)?.precioHora ?? 0}</Typography>
                 </Paper>
               ))}
             </Stack>
