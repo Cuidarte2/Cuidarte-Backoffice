@@ -248,7 +248,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
   },
   setClienteHook: (cliente: Cliente | null) => {
     set({ cliente:cliente });
-  }
+  },
 }));
 
 export default useClientes;

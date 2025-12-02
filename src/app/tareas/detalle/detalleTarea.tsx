@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from "@mui/material";
+import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert, Box, Rating } from "@mui/material";
 import ConfirmButton from "@/app/components/confirmButton";
 import useClientes from "@/app/hooks/useClientes";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -17,6 +17,7 @@ import EstadoSelect from "@/app/components/EstadoSelect";
 import useTareas from "@/app/hooks/useTareas";
 import useTipoServicio from "@/app/hooks/useTipoServicio";
 import TipoServicioSelect from "@/app/components/tipoServicioSelect";
+import CalificarTareaModal from "@/app/components/calificarTareaButton";
 
 interface Props {
   tarea: Tarea;
@@ -26,9 +27,11 @@ interface Props {
 export default function ClienteDetalle({ tarea, onVolver }: Props) {
   const [editando, setEditando] = useState(false);
   const [formData, setFormData] = useState({ ...tarea });
-  const { update, remove, error } = useTareas();
-    const [apiError, setApiError] = useState<string | null>(null);
+  const { update, remove, calificarTarea, error } = useTareas();
+  const [apiError, setApiError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [openCalificar, setOpenCalificar] = useState(false);
+
   const { tiposServicios, fetchTipoServicios } = useTipoServicio();
   const {
     clientes,
@@ -65,6 +68,18 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
     }
   }, [tarea, clientes]);
 
+  useEffect(() => {
+    const estadoValue =
+      typeof formData.estado === "string"
+        ? estadoMap[formData.estado] ?? EstadoTarea.NoSeCargo
+        : formData.estado ?? EstadoTarea.NoSeCargo;
+
+    if (!formData.calificacion && estadoValue === EstadoTarea.Finalizado) {
+      setOpenCalificar(true);
+    }
+  }, [formData.estado, formData.calificacion]);
+
+
   const handleChange =
     (field: keyof typeof formData) =>
       (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,13 +95,14 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
     remove(id);
     onVolver();
   };
+
   return (
     <Paper sx={{ width: "100%", minHeight: "100vh", p: 4 }} elevation={3}>
-       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                {apiError}
-              </Alert>
-            </Snackbar>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+          {apiError}
+        </Alert>
+      </Snackbar>
       <Stack direction="row" spacing={2} mb={2}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver
@@ -98,6 +114,37 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
       </Typography>
 
       <Stack spacing={2}>
+        {formData.calificacion && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="h6">Calificación</Typography>
+            <Rating value={formData.calificacion.nota} readOnly max={5} />
+            <Typography color="text.secondary" sx={{ mt: 1 }}>
+              {formData.calificacion.comentario || "Sin comentario"}
+            </Typography>
+          </Box>
+        )}
+
+        <CalificarTareaModal
+          open={openCalificar}
+          onClose={() => setOpenCalificar(false)}
+          onConfirm={(data) => {
+            console.log('Calificación enviada:', data);
+
+            calificarTarea({
+              nota: data.nota,
+              comentario: data.comentario,
+              idTarea: tarea.id as number
+            });
+            setFormData((prev) => ({
+              ...prev,
+              calificacion: { nota: data.nota, comentario: data.comentario, idTarea: tarea.id as number },
+            }));
+
+            setOpenCalificar(false);
+            setEditando(false);
+          }}
+        />
+
         <ClienteSelect
           value={formData.clienteId ?? 0}
           onChange={(c) =>
@@ -385,7 +432,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
 
                   <Typography>
                     <strong>precio:</strong> $
-                      {(tiposServicios.find(
+                    {(tiposServicios.find(
                       (ts) => ts.id === servicio.tipoServicio?.id
                     )?.precioHora ?? 0) * servicio.cantServicios}
                   </Typography>

@@ -15,6 +15,7 @@ export interface Tarea {
   serviciosUsados?: Servicio[];
   serviciosExtra?: Servicio[];
   costo?: number;
+  calificacion?: Calificacion;
 }
 
 export enum EstadoTarea {
@@ -30,3 +31,9 @@ export const estadoMap: Record<string, EstadoTarea> = {
   Finalizado: EstadoTarea.Finalizado,
   NoSeCargo: EstadoTarea.NoSeCargo,
 };
+
+export interface Calificacion {
+  nota: number;
+  comentario?: string;
+  idTarea: number;
+}

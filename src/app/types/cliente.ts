@@ -17,7 +17,7 @@ export interface Cliente {
   formaPago: string;
   observaciones: string;
   suscripcion?: Suscripcion;
-  serviciosDisponibles: Servicio[];
+  serviciosDisponibles?: Servicio[];
 }
 
 

@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { TextField, Button, Box, Snackbar, Typography, Stack, Chip } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { TextField, Button, Box, Snackbar, Typography, Stack, Chip, Alert } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import useTareas from '@/app/hooks/useTareas';
@@ -15,14 +15,14 @@ import useClientes from '@/app/hooks/useClientes';
 import useTipoServicio from '@/app/hooks/useTipoServicio';
 
 export default function TareaForm() {
-  const { addTarea } = useTareas();
+  const { addTarea, error } = useTareas();
   const { cliente } = useClientes();
     const { tiposServicios } = useTipoServicio();
   const [apiError, setApiError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
-
+    const [open, setOpen] = useState(false);
   const aplicarConsumoServicios = (serviciosSolicitados: Servicio[]) => {
-    if (!cliente || !serviciosSolicitados) return;
+    if (!cliente || !serviciosSolicitados || !cliente.serviciosDisponibles) return;
 
     let nuevoTotal = 0;
     const clienteServicios = cliente.serviciosDisponibles.map(s => ({...s}));
@@ -69,6 +69,11 @@ export default function TareaForm() {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
+   const handleClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpen(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -100,17 +105,20 @@ export default function TareaForm() {
       }
     }
   };
+  
+  useEffect(() => {
+  if (error) {
+    setApiError(typeof error === 'string' ? error : 'Ocurrió un error inesperado');
+    setOpen(true);
+  }
+}, [error]);
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
-      {apiError && (
-        <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          open={!!apiError}
-          message={apiError}
-          autoHideDuration={6000}
-          onClose={() => setApiError(null)}
-        />
-      )}
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+             <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+               {apiError }
+             </Alert>
+           </Snackbar>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Typography variant="h5" className="mb-6 text-center">
           Crear tarea
