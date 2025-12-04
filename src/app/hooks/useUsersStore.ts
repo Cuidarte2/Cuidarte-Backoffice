@@ -53,10 +53,10 @@ const useUsersStore = create<StoreUserState>((set) => ({
 
         return;
       }
-
-      window.dispatchEvent(new Event("auth-change"));
       set({ error: null, loading: false });
       const loginFuncionario = await response.json();
+      localStorage.setItem("cuidarte_usuario", JSON.stringify({ token: loginFuncionario.token }));
+      window.dispatchEvent(new Event("auth-change"));
       set({ user: loginFuncionario });
       return loginFuncionario;
     } catch (error) {
@@ -72,6 +72,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
   logout: async () => {
     localStorage.removeItem("cuidarte_usuario");
     set({ user: null });
+    window.dispatchEvent(new Event("auth-change"));
   },
   fetchUsuarios: async () => {
     set({ loading: true, error: null });

@@ -1,44 +1,66 @@
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 import Image from "next/image";
 import Link from "next/link";
+import { getTokenFromStorage } from "@/app/utils/auth";
+import useUsersStore from "../hooks/useUsersStore";
+import { useRouter } from "next/navigation";
 
-const links = [
-  {
-    href: "/",
-    name: "Inicio",
-  },
-  {
-    href: "/registro",
-    name: "Registro",
-  },
-  {
-    href: "/pages/backoffice/login",
-    name: "Login",
-  },
-];
+export default function Header() {
+  const { logout } = useUsersStore();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-export default function NavLinks() {
-return (
-  <div className="flex flex-wrap items-center justify-between gap-4 p-1 bg-gray-100">
-    <div className="flex items-center gap-2">
-      <Image
-        src="/cuidarte-logo.png"
-        alt="Logo"
-        width={64}
-        height={64}
-      />
-    </div>
 
-    <div className="flex flex-wrap gap-3 justify-center sm:justify-end w-full sm:w-auto">
-      {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className="text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white text-sm sm:text-base transition-colors"
-        >
-          {link.name}
-        </Link>
-      ))}
-    </div>
-  </div>
-);
+  const router = useRouter();
+  useEffect(() => {
+    const checkToken = () => setIsLoggedIn(!!getTokenFromStorage());
+    checkToken();
+
+    window.addEventListener("auth-change", checkToken);
+    return () => window.removeEventListener("auth-change", checkToken);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    logout();
+    router.replace("/login");
+  }, [logout, router]);
+
+
+
+  return (
+    <AppBar position="static" color="default" elevation={0}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Image src="/cuidarte-logo.png" alt="Logo" width={48} height={48} />
+        </Box>
+
+        {/* Links */}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {!isLoggedIn && (
+            <>
+              <Button component={Link} href="/login" color="inherit">
+                Login
+              </Button>
+            </>
+          )}
+          {isLoggedIn && (
+            <>
+              <Button
+                color="inherit"
+                onClick={() => {
+                  handleLogout();
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
 }
