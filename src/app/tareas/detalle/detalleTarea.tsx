@@ -128,8 +128,6 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
           open={openCalificar}
           onClose={() => setOpenCalificar(false)}
           onConfirm={(data) => {
-            console.log('Calificación enviada:', data);
-
             calificarTarea({
               nota: data.nota,
               comentario: data.comentario,

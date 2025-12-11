@@ -38,7 +38,7 @@ const useTipoPlan = create<StoreTipoPlanState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener tipos de plan");
       }
 
@@ -70,7 +70,7 @@ const useTipoPlan = create<StoreTipoPlanState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener los planes");
       }
       const data = await response.json();
@@ -103,7 +103,7 @@ const useTipoPlan = create<StoreTipoPlanState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar tipo plan");
       }
       const data = await response.json();
@@ -137,7 +137,7 @@ const useTipoPlan = create<StoreTipoPlanState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar tipo plan");
       }
       set((state) => ({

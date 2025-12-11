@@ -50,7 +50,7 @@ const useTareas = create<StoreTareaState>((set, get) => ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener tareas");
       }
       const data: { items: Tarea[]; totalItems: number } =
@@ -91,7 +91,7 @@ addTarea: async (tarea: Tarea) => {
       let errorMessage = "Error al agregar la tarea";
 
       if (contentType?.includes("application/json")) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         errorMessage = errorData.message || errorMessage;
       } else {
         const errorText = await response.text().catch(() => "");
@@ -138,7 +138,7 @@ addTarea: async (tarea: Tarea) => {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar la tarea");
       }
       const data = await response.json();
@@ -177,7 +177,7 @@ addTarea: async (tarea: Tarea) => {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar la tarea");
       }
       set((state) => {
@@ -228,7 +228,7 @@ addTarea: async (tarea: Tarea) => {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener las tarea ");
       }
       const data = await response.json();
@@ -258,7 +258,7 @@ addTarea: async (tarea: Tarea) => {
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al calificar la tarea");
       }
       const calificacionRes: Calificacion = await response.json();

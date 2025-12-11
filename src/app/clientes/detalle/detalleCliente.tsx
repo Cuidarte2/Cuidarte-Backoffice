@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from '@mui/material';
 import ConfirmButton from '@/app/components/confirmButton';
-import { Cliente } from '@/app/types/cliente';
+import { Cliente, validarCedula } from '@/app/types/cliente';
 import useClientes from '@/app/hooks/useClientes';
 import TipoPlanSelect from '@/app/components/tipoPlanSelect';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
@@ -29,7 +29,17 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
   const [mensualidades, setMensualidades] = useState<Mensualidad[] | null>(null);
   const handleChange = (field: keyof typeof formData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [field]: event.target.value });
+    const value = event.target.value;
+    setFormData(prev => ({ ...prev, [field]: value }));
+
+    if (field === "ci") {
+      if (!validarCedula(value)) {
+        setApiError("Cédula inválida");
+      } else {
+        setApiError("");
+      }
+    }
+
   };
 
   useEffect(() => {
@@ -78,20 +88,6 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
 
   const columns: GridColDef<Mensualidad>[] = [
     {
-      field: 'periodoDesde',
-      headerName: 'Periodo desde',
-      width: 150,
-      valueGetter: (params: Parameters<GridValueGetter>[0]) =>
-        params ? new Date(params as string | number | Date).toLocaleDateString() : ''
-    },
-    {
-      field: 'periodoHasta',
-      headerName: 'Periodo hasta',
-      width: 150,
-      valueGetter: (params: Parameters<GridValueGetter>[0]) =>
-        params ? new Date(params as string | number | Date).toLocaleDateString() : ''
-    },
-    {
       field: 'precio',
       headerName: 'Monto',
       width: 150,
@@ -129,7 +125,6 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
       <Typography variant="h4" gutterBottom>
         Detalle de cliente
       </Typography>
-
       <Stack spacing={2}>
         <TextField
           label="Nombre"
@@ -146,32 +141,19 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
+        <TextField
+          label="Cedula de identidad"
+          value={formData.ci}
+          onChange={handleChange('ci')}
+          fullWidth
+          disabled={!editando}
+        />
         <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={es}>
           <DatePicker
             label="Fecha de nacimiento"
             value={formData.fechaNacimiento ? new Date(formData.fechaNacimiento) : null}
             onChange={(newValue) => {
               setFormData((prev) => ({ ...prev, fechaNacimiento: newValue ?? null }));
-            }}
-            format="yyyy-MM-dd"
-            slotProps={{ textField: { fullWidth: true } }}
-            disabled={!editando}
-          />
-          <DatePicker
-            label="Fecha de inicio mensualidad"
-            value={formData.suscripcion?.fechaInicioMensualidad ? new Date(formData.suscripcion?.fechaInicioMensualidad) : null}
-            onChange={(newValue) => {
-              setFormData((prev) => ({ ...prev, suscripcion: { ...prev.suscripcion, fechaInicioMensualidad: newValue ?? undefined } }));
-            }}
-            format="yyyy-MM-dd"
-            slotProps={{ textField: { fullWidth: true } }}
-            disabled={!editando}
-          />
-          <DatePicker
-            label="Fecha de vencimiento mensualidad"
-            value={formData.suscripcion?.fechaFinMensualidad ? new Date(formData.suscripcion?.fechaFinMensualidad) : null}
-            onChange={(newValue) => {
-              setFormData((prev) => ({ ...prev, suscripcion: { ...prev.suscripcion, fechaFinMensualidad: newValue ?? undefined } }));
             }}
             format="yyyy-MM-dd"
             slotProps={{ textField: { fullWidth: true } }}

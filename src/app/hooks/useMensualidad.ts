@@ -31,7 +31,7 @@ const useMensualidad = create<StoreMensualidadState>((set) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener las mensualidades");
       }
       await response.json();
@@ -60,7 +60,7 @@ const useMensualidad = create<StoreMensualidadState>((set) => ({
           }
         );
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+           const errorData = await response.json();
           throw new Error(errorData.message || "Error al obtener mensualidades");
         }
         return await response.json();

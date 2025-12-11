@@ -47,7 +47,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener clientes");
       }
       const data: { items: Cliente[]; totalItems: number } =
@@ -86,7 +86,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener los clientes");
       }
       const data = await response.json();
@@ -130,7 +130,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar el cliente");
       }
       const data = await response.json();
@@ -171,7 +171,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar el cliente");
       }
       set((state) => {
@@ -226,7 +226,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener el cliente");
       }
       const data = await response.json();

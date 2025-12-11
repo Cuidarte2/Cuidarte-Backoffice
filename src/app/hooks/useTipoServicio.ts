@@ -39,7 +39,7 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(
           errorData.message || "Error al obtener tipos de servicio"
         );
@@ -73,10 +73,8 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || "Error al obtener los tipos de servicios"
-        );
+              const errorData = await response.json();
+        throw new Error(errorData.message || "Error al editar tipo servicio");
       }
       const data = await response.json();
       set((state) => ({
@@ -107,7 +105,7 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar tipo servicio");
       }
       const data = await response.json();
@@ -141,7 +139,7 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar tipo servicio");
       }
       set((state) => ({

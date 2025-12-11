@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from "react";
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography, useMediaQuery } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography, useMediaQuery } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import GroupIcon from '@mui/icons-material/Group';
 import PersonIcon from "@mui/icons-material/Person";
@@ -9,6 +9,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useTheme } from "@mui/material/styles";
 import TipoServicioPage from "./tipoServicio/TipoServicioPage";
 import TareasPage from "./tareas/TareasPage";
@@ -70,7 +71,55 @@ useEffect(() => {
           bgcolor: theme.palette.background.default,
         }}
       >
-        <Paper
+        {isMobile ? (
+  <Accordion>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography>Menú</Typography>
+    </AccordionSummary>
+    <AccordionDetails>
+      <List>
+        {[
+          "Tareas",
+          "Clientes",
+          "Equipo",
+          "TipoPlan",
+          "TipoServicio",
+          "Empresa",
+          "Fondo Portada",
+          "Logout",
+        ].map((item) => (
+          <ListItem key={item} disablePadding>
+            <ListItemButton onClick={() => setSelectedMenu(item)}>
+              <ListItemIcon>
+                {item === "Tareas" ? (
+                  <AssignmentIcon />
+                ) : item === "Clientes" ? (
+                  <PersonIcon />
+                ) : item === "TipoServicio" ? (
+                  <SupportAgentIcon />
+                ) : item === "Equipo" ? (
+                  <GroupIcon />
+                ) : item === "TipoPlan" ? (
+                  <DashboardIcon />
+                ) : item === "Empresa" ? (
+                  <ApartmentIcon />
+                ) : item === "Fondo Portada" ? (
+                  <PhotoSizeSelectActualIcon />
+                ) : (
+                  <LogoutIcon />
+                )}
+              </ListItemIcon>
+              <ListItemText primary={item} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </AccordionDetails>
+  </Accordion>
+) : (
+  <Paper sx={{ width: 250, height: "100vh" }}>
+    <List>
+         <Paper
           sx={{
             width: '100%',
             height: isMobile ? 'auto' : '100vh',
@@ -105,6 +154,10 @@ useEffect(() => {
             ))}
           </List>
         </Paper>
+    </List>
+  </Paper>
+)}
+
       </Box>
 
       <Box

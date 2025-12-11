@@ -48,7 +48,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Login fallido");
 
         return;
@@ -93,7 +93,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener funcionarios");
       }
       const data = await response.json();
@@ -128,7 +128,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al crear el funcionario");
       }
       const data = await response.json();
@@ -164,7 +164,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar funcionario");
       }
       const data = await response.json();
@@ -198,7 +198,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar funcionario");
       }
       set((state) => ({
@@ -229,7 +229,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         }
       );
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener mensualidades");
       }
       const horas = await response.json();
