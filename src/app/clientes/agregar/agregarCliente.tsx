@@ -13,7 +13,8 @@ export default function ClienteForm() {
 
   const [apiError, setApiError] = useState<string | null>(null);
   const [form, setForm] = useState<{
-    id: number
+    id: number;
+    fecha: Date;
     nombre: string;
     apellido: string;
     email: string;
@@ -28,6 +29,7 @@ export default function ClienteForm() {
     ci: string;
   }>({
     id: 0,
+    fecha: new Date(),
     nombre: '',
     apellido: '',
     email: '',
@@ -106,6 +108,7 @@ export default function ClienteForm() {
     const hasErrors = Object.values(newErrors).some((e) => e);
     if (!hasErrors) {
       try {
+        form.fecha = new Date();
         await addCliente(form);
         setApiError(null);
 

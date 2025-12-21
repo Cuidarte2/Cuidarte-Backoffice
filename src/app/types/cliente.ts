@@ -3,6 +3,7 @@ import { Servicio, TipoPlan } from "./tipoPlan";
 
 export interface Cliente {
   id: number;
+  fecha : Date | null;
   nombre?: string;
   apellido?: string;
   email?: string;
