@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { TipoServicio } from "../types/tipoPlan";
-import { getTokenFromStorage } from "../utils/auth";
+import { clearSession, getTokenFromStorage } from "../utils/auth";
 
 interface StoreTipoServicioState {
   tiposServicios: TipoServicio[];
@@ -39,7 +39,12 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
       );
 
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ tiposServicios: [], loading: false, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(
           errorData.message || "Error al obtener tipos de servicio"
         );
@@ -73,7 +78,12 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
-              const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ tiposServicios: [], loading: false, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar tipo servicio");
       }
       const data = await response.json();
@@ -105,6 +115,11 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
+        if (response.status === 401) {
+          clearSession();
+          set({ tiposServicios: [], loading: false, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar tipo servicio");
       }
@@ -139,7 +154,12 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ tiposServicios: [], loading: false, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar tipo servicio");
       }
       set((state) => ({

@@ -83,7 +83,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
   }
 
   const onPagarMensualidad = (id: number) => {
-    pagarMensualidad(id);
+    pagarMensualidad(id,cliente.id as number);
   };
 
   const columns: GridColDef<Mensualidad>[] = [

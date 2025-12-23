@@ -6,14 +6,14 @@ import { Mensualidad } from "../types/suscripcion";
 interface StoreMensualidadState {  
   loading: boolean;
   error: string | null;
-  pagarMensualidad: (id: number) => void;
+  pagarMensualidad: (idSuscripcion: number,idCliente :number) => void;
   fetchMensualidad: (id: number) => Promise<Mensualidad[] | undefined>;
 }
 
 const useMensualidad = create<StoreMensualidadState>((set) => ({
   loading: false,
   error: null,
-  pagarMensualidad: async (idSuscripcion: number) => {
+  pagarMensualidad: async (idSuscripcion: number,idCliente :number) => {
     try {
       const token = getTokenFromStorage();
       if (!token) throw new Error("Usuario no autenticado");
@@ -26,7 +26,7 @@ const useMensualidad = create<StoreMensualidadState>((set) => ({
             "x-api-key": process.env.NEXT_PUBLIC_CUIDARTE_API_KEY || "",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(idSuscripcion),
+          body: JSON.stringify({ idSuscripcion, idCliente }),
           redirect: "follow",
         }
       );

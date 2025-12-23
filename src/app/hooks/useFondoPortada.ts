@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { FondoPortada } from "../types/fondoPortada";
-import { getTokenFromStorage } from "../utils/auth";
+import { clearSession, getTokenFromStorage } from "../utils/auth";
 
 interface StoreFondoPortadaState {
   fondoPortada: FondoPortada | null;
@@ -32,7 +32,7 @@ const useFondoPortada = create<StoreFondoPortadaState>((set) => ({
       });
 
       if (!response.ok) {
-         const errorData = await response.json();
+        const errorData = await response.json();
         throw new Error(errorData.message || `Error ${response.status}`);
       }
 
@@ -57,11 +57,7 @@ const useFondoPortada = create<StoreFondoPortadaState>((set) => ({
     try {
       const token = getTokenFromStorage();
       if (!token) throw new Error("Usuario no autenticado");
-
-      // Le enviamos solo el campo necesario al backend
       const payload = { url: fondo.url ?? null };
-
-      // Intentamos primero llamar al endpoint PUT (upsert). Si tu backend usa POST, cambialo.
       const response = await fetch(`${API_BASE}/FondoPortada/Crear`, {
         method: "PUT",
         headers: {
@@ -72,8 +68,12 @@ const useFondoPortada = create<StoreFondoPortadaState>((set) => ({
         body: JSON.stringify(payload),
       });
 
-      // Si PUT falla con 404/405, intentamos POST por compatibilidad
       let finalResponse = response;
+      if (response.status === 401) {
+        clearSession();
+        set({ error: "Sesión expirada" });
+        throw new Error("Sesión expirada, vuelva a iniciar sesión");
+      }
       if (!response.ok && (response.status === 404 || response.status === 405)) {
         finalResponse = await fetch(`${API_BASE}/FondoPortada/Crear`, {
           method: "POST",
@@ -94,7 +94,7 @@ const useFondoPortada = create<StoreFondoPortadaState>((set) => ({
       const data = await finalResponse.json();
       const saved: FondoPortada =
         data && typeof data === "object" && "url" in data
-          ? {  url: data.url ?? null }
+          ? { url: data.url ?? null }
           : (data as FondoPortada);
 
       set({ fondoPortada: saved, loading: false });

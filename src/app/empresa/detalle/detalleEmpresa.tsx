@@ -52,7 +52,7 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   }, [tiposPlanes.length,fetchTipoPlan]);
 
     const onPagarMensualidad = (id: number) => {
-     pagarMensualidad(id);
+     pagarMensualidad(id, 0);
   };
 
  useEffect(() => {

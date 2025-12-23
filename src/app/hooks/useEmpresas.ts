@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import { getTokenFromStorage } from "../utils/auth";
+import { clearSession, getTokenFromStorage } from "../utils/auth";
 import { Empresa } from "../types/empresa";
 
 interface StoreEmpresaState {
@@ -36,7 +36,12 @@ const useEmpresas = create<StoreEmpresaState>((set) => ({
       );
 
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ empresas: [], error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener empresas");
       }
       const data = await response.json();
@@ -66,7 +71,12 @@ const useEmpresas = create<StoreEmpresaState>((set) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ empresas: [], error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener empresas");
       }
       const data = await response.json();
@@ -99,7 +109,12 @@ const useEmpresas = create<StoreEmpresaState>((set) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ empresas: [], error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar la empresa");
       }
       const data = await response.json();
@@ -133,10 +148,15 @@ const useEmpresas = create<StoreEmpresaState>((set) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+        if (response.status === 401) {
+          clearSession();
+          set({ empresas: [], error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar el empresa");
       }
-        set((state) => ({
+      set((state) => ({
         empresas: state.empresas.filter((e) => e.id !== id),
       }));
     } catch (err) {

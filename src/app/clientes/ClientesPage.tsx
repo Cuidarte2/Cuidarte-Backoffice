@@ -80,7 +80,7 @@ const ClientesPage = () => {
 
   useEffect(() => {
     if (tiposPlanes.length === 0) fetchTipoPlan();
-  }, [tiposPlanes, fetchTipoPlan]);
+  }, [ fetchTipoPlan]);
 
   useEffect(() => {
     fetchClientes(page)

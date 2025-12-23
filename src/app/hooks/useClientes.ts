@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { Cliente } from "../types/cliente";
-import { getTokenFromStorage } from "../utils/auth";
+import { clearSession, getTokenFromStorage } from "../utils/auth";
 
 interface StoreClienteState {
   clientes: Record<number, Cliente[]>;
@@ -47,6 +47,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       );
 
       if (!response.ok) {
+        if (response.status === 401) {
+          clearSession();
+          set({ clientes: {}, totalItems: 0, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+
         const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener clientes");
       }
@@ -86,7 +92,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+           if (response.status === 401) {
+          clearSession();
+          set({ clientes: {}, totalItems: 0, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener los clientes");
       }
       const data = await response.json();
@@ -130,7 +141,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+           if (response.status === 401) {
+          clearSession();
+          set({ clientes: {}, totalItems: 0, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al editar el cliente");
       }
       const data = await response.json();
@@ -171,7 +187,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+           if (response.status === 401) {
+          clearSession();
+          set({ clientes: {}, totalItems: 0, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al eliminar el cliente");
       }
       set((state) => {
@@ -199,10 +220,10 @@ const useClientes = create<StoreClienteState>((set, get) => ({
 
     for (const clientesPagina of Object.values(pages)) {
       const cliente = clientesPagina.find((c) => c.id === id);
-      if (cliente){
+      if (cliente) {
         set({ cliente: cliente });
         return cliente;
-      } 
+      }
     }
 
     return undefined;
@@ -212,8 +233,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       const token = getTokenFromStorage();
       if (!token) throw new Error("Usuario no autenticado");
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_CUIDARTE_API_URL
+        `${process.env.NEXT_PUBLIC_CUIDARTE_API_URL
         }/Cliente/ObtenerPorTexto?texto=${encodeURIComponent(texto)}`,
         {
           method: "GET",
@@ -226,7 +246,12 @@ const useClientes = create<StoreClienteState>((set, get) => ({
         }
       );
       if (!response.ok) {
-         const errorData = await response.json();
+           if (response.status === 401) {
+          clearSession();
+          set({ clientes: {}, totalItems: 0, error: "Sesión expirada" });
+          throw new Error("Sesión expirada, vuelva a iniciar sesión");
+        }
+        const errorData = await response.json();
         throw new Error(errorData.message || "Error al obtener el cliente");
       }
       const data = await response.json();
@@ -247,7 +272,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
     }
   },
   setClienteHook: (cliente: Cliente | null) => {
-    set({ cliente:cliente });
+    set({ cliente: cliente });
   },
 }));
 

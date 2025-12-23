@@ -12,3 +12,7 @@ export function getTokenFromStorage(): string | null {
     return null;
   }
 }
+
+export function clearSession() {
+
+}
