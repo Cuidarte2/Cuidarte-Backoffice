@@ -20,6 +20,7 @@ fechaGeneracion: Date;
 periodoDesde: Date;
 periodoHasta: Date;
 estado: MensualidadEstado;
+precioProximaMensualidad?: number;
 }
 export enum MensualidadEstado {
 	Pagada,     

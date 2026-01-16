@@ -37,6 +37,7 @@ const TipoPlanPage = () => {
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'nombre', headerName: 'Nombre', flex: 1, minWidth: 120 },
     { field: 'precio', headerName: 'precio', flex: 1, minWidth: 120 },
+    { field: 'precioConDescuento', headerName: 'precio con descuento', flex: 1, minWidth: 120 },
     {
         field: 'Destino',
         headerName: 'Destino',

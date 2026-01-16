@@ -83,9 +83,16 @@ export default function TipoPlanDetalle({ ts, onVolver }: Props) {
           disabled={!editando}
         />
         <TextField
-          label="precioHora"
+          label="precio"
           value={formData.precio}
           onChange={handleChange('precio')}
+          fullWidth
+          disabled={!editando}
+        />
+            <TextField
+          label="precio con descuento"
+          value={formData.precioConDescuento}
+          onChange={handleChange('precioConDescuento')}
           fullWidth
           disabled={!editando}
         />

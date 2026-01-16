@@ -24,7 +24,7 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   const { update, remove, error } = useEmpresas();
     const [apiError, setApiError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  const { pagarMensualidad } = useMensualidad();
+  const { pagarMensualidadEmpresa } = useMensualidad();
   const { tiposPlanes, fetchTipoPlan } = useTipoPlan();
   const { fetchMensualidad } = useMensualidad();
   const [mensualidades, setMensualidades] = useState<Mensualidad[] | null>(null);
@@ -52,13 +52,13 @@ export default function EmpresaDetalle({ empresa, onVolver }: Props) {
   }, [tiposPlanes.length,fetchTipoPlan]);
 
     const onPagarMensualidad = (id: number) => {
-     pagarMensualidad(id, 0);
+     pagarMensualidadEmpresa(id);
   };
 
  useEffect(() => {
     const fetchData = async () => {
       if (empresa.suscripcion?.id) {
-        const result = await fetchMensualidad(empresa.suscripcion.id as number);
+        const result = await fetchMensualidad(empresa.suscripcion.id as number,-1);
         if (result != undefined) setMensualidades(result);
       }
     };

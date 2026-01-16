@@ -3,6 +3,7 @@ export interface TipoPlan {
     nombre?: string;
     servicios?: Servicio[]
     precio?: number;
+    precioConDescuento?: number;
     destino? : PlanDestino;
 }
 

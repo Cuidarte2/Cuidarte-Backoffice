@@ -57,9 +57,8 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       if (cliente.suscripcion?.id) {
-        const result = await fetchMensualidad(cliente.suscripcion.id as number);
-        if (result != undefined) setMensualidades(result);
-      }
+        const result = await fetchMensualidad(cliente.suscripcion.id as number,cliente.id as number);
+        if (result != undefined) setMensualidades(result);      }
     };
     fetchData();
   }, [cliente.suscripcion?.id, fetchMensualidad]);
@@ -275,7 +274,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
         <ConfirmButton
 
           onConfirm={() => onPagarMensualidad(cliente.suscripcion?.id as number)}
-          confirmText="¿Pagar mensualidad?"
+          confirmText={`¿Pagar mensualidad de $ ${mensualidades?.[0]?.precioProximaMensualidad}?`}
           buttonProps={{ variant: "outlined", disabled: editando }}
         >
           Pagar mensualidad

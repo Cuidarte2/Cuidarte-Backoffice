@@ -6,33 +6,44 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { es } from 'date-fns/locale';
 import useTipoPlan from '@/app/hooks/useTipoPlan';
-import { Servicio, TipoPlan } from '@/app/types/tipoPlan';
+import { PlanDestino, Servicio, TipoPlan } from '@/app/types/tipoPlan';
 import TipoServicioSelect from '@/app/components/tipoServicioSelect';
 import PlanDestinoSelect from '@/app/components/planDestinoSelect';
 import useTipoServicio from '@/app/hooks/useTipoServicio';
 
 export default function TipoPlanForm() {
   const { add } = useTipoPlan();
-  const {tiposServicios} = useTipoServicio();
+  const { tiposServicios } = useTipoServicio();
   const [apiError, setApiError] = useState<string | null>(null);
   const [form, setForm] = useState<TipoPlan>({
     nombre: '',
     precio: 0,
+    precioConDescuento: 0,
     servicios: [],
-    destino: 0,
+    destino:  PlanDestino.Cliente,
   });
 
   const [errors, setErrors] = useState({
     nombre: '',
     precio: '',
+    precioConDescuento: '',
     destino: '',
   });
-  type FormField = keyof typeof form;
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const field = e.target.name as FormField;
-    setForm({ ...form, [field]: e.target.value });
-    setErrors({ ...errors, [field]: "" });
-  };
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const field = e.target.name as keyof TipoPlan;
+
+  setForm({
+    ...form,
+    [field]:
+      field === "precio" || field === "precioConDescuento"
+        ? Number(e.target.value)
+        : field === "destino"
+        ? (Number(e.target.value) as PlanDestino)
+        : e.target.value,
+  });
+
+  setErrors({ ...errors, [field]: "" });
+};
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,9 +52,10 @@ export default function TipoPlanForm() {
     const newErrors = {
       nombre: form.nombre ? "" : "El nombre es requerido.",
       precio: form.precio ? "" : "El precio es requerido.",
-      destino: form.destino ? "" : "El destino es requerido.",
-    };
+      precioConDescuento: form.precioConDescuento ? "" : "El precio con descuento es requerido.",
+      destino: form.destino !== null && form.destino !== undefined ? "" : "El destino es requerido.",
 
+    };
     setErrors(newErrors);
     const hasErrors = Object.values(newErrors).some((e) => e);
     if (!hasErrors) {
@@ -91,7 +103,7 @@ export default function TipoPlanForm() {
           error={!!errors.nombre}
           helperText={errors.nombre}
         />
-         <TextField
+        <TextField
           label="precio"
           name="precio"
           variant="standard"
@@ -100,6 +112,16 @@ export default function TipoPlanForm() {
           fullWidth
           error={!!errors.precio}
           helperText={errors.precio}
+        />
+        <TextField
+          label="precio con descuento"
+          name="precioConDescuento"
+          variant="standard"
+          value={form.precioConDescuento}
+          onChange={handleChange}
+          fullWidth
+          error={!!errors.precioConDescuento}
+          helperText={errors.precioConDescuento}
         />
         <PlanDestinoSelect
           value={form.destino!}
@@ -114,7 +136,7 @@ export default function TipoPlanForm() {
                 onChange={(id) => {
                   const tipo = tiposServicios.find(ts => ts.id === id)
                   const updated = [...form.servicios || []];
-                  updated[index].tipoServicio = { id, nombre: tipo?.nombre || ''};
+                  updated[index].tipoServicio = { id, nombre: tipo?.nombre || '' };
                   setForm({ ...form, servicios: updated });
                 }}
               />
@@ -150,7 +172,7 @@ export default function TipoPlanForm() {
               {
                 id: 0,
                 cantServicios: 0,
-                tipoServicio: { id: 0 }, 
+                tipoServicio: { id: 0 },
               } satisfies Servicio
             ];
             setForm({ ...form, servicios: nuevos });

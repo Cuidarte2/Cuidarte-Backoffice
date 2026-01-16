@@ -233,7 +233,7 @@ const useUsersStore = create<StoreUserState>((set) => ({
         throw new Error(errorData.message || "Error al obtener mensualidades");
       }
       const horas = await response.json();
-      const meses = getUltimosMeses(horas.length);
+      const meses = getUltimosMeses(horas.length).reverse();
 
      
 

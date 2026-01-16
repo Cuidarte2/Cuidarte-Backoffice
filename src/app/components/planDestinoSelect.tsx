@@ -19,7 +19,7 @@ export default function PlanDestinoSelect({ value, onChange, disabled }: Props) 
       <InputLabel>Plan Destino</InputLabel>
       <Select
         value={value}
-        onChange={(e) => onChange(Number(e.target.value) as PlanDestino)}
+         onChange={(e) => onChange(Number(e.target.value) as PlanDestino)}
         label="Destino"
 
         disabled={disabled}
