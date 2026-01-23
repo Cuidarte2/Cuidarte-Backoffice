@@ -27,10 +27,6 @@ export default function LoginPage() {
   const [apiError, setApiError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("API URL:", process.env.NEXT_PUBLIC_CUIDARTE_API_URL);
-  }, []);
-
-  useEffect(() => {
     if (error) {
       setApiError(error);
     }
