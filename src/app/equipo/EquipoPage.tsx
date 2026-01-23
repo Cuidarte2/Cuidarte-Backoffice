@@ -84,7 +84,7 @@ const EquiposPage = () => {
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h4">Lista de usuarios</Typography>
             <Button variant="contained" onClick={toggleFormulario}>
-              {mostrarFormulario ? 'Ocultar formulario' : 'Agregar cliente'}
+              {mostrarFormulario ? 'Ocultar formulario' : 'Agregar Funcionario'}
             </Button>
           </Stack>
 

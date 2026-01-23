@@ -33,7 +33,7 @@ export default function LoginPage() {
     }
   }, [error]);
 
-
+  console.log("API URL (prod):", process.env.NEXT_PUBLIC_CUIDARTE_API_URL);
   const [form, setForm] = useState({
     email: "",
     password: "",
