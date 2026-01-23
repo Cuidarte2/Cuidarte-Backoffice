@@ -26,6 +26,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  useEffect(() => {
+    console.log("API URL:", process.env.NEXT_PUBLIC_CUIDARTE_API_URL);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -33,7 +36,6 @@ export default function LoginPage() {
     }
   }, [error]);
 
-  console.log("API URL (prod):", process.env.NEXT_PUBLIC_CUIDARTE_API_URL);
   const [form, setForm] = useState({
     email: "",
     password: "",
