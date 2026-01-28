@@ -69,7 +69,7 @@ export default function TipoServicioDetalle({ ts, onVolver }: Props) {
           disabled={!editando}
         />
         <TextField
-          label="precio por hora"
+          label="precio"
           type="number"
           value={formData.precioHora ?? ''}
           onChange={handleChange('precioHora')}

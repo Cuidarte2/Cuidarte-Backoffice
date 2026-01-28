@@ -33,7 +33,7 @@ export default function TipoServicioForm() {
 
     const newErrors = {
       nombre: form.nombre ? "" : "El nombre es requerido.",
-      precioHora: form.precioHora > 0 ? "" : "El precio por hora debe ser mayor a 0."
+      precioHora: form.precioHora > 0 ? "" : "El precio debe ser mayor a 0."
     };
 
     setErrors(newErrors);
@@ -85,7 +85,7 @@ export default function TipoServicioForm() {
           helperText={errors.nombre}
         />
         <TextField
-          label="precio por hora"
+          label="precio"
           name="precioHora"
           variant="standard"
           value={form.precioHora}
