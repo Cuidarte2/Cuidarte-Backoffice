@@ -37,7 +37,6 @@ const useTipoServicio = create<StoreTipoServicioState>((set, get) => ({
           redirect: "follow",
         }
       );
-
       if (!response.ok) {
         if (response.status === 401) {
           clearSession();

@@ -94,7 +94,7 @@ export default function TipoServicioForm() {
           error={!!errors.precioHora}
           helperText={errors.precioHora}
         />
-        <Button type="submit" variant="contained">Guardar Cliente</Button>
+        <Button type="submit" variant="contained">Guardar Tipo de Servicio</Button>
       </Box>
     </LocalizationProvider>
   );

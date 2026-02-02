@@ -103,7 +103,7 @@ export default function EmpresaForm() {
           value={form.tipoPlanId ?? 0}
           onChange={(plan) => setForm({ ...form, tipoPlanId: plan.id ?? 0 })}
         />
-        <Button type="submit" variant="contained">Guardar Cliente</Button>
+        <Button type="submit" variant="contained">Guardar Empresa</Button>
       </Box>
   );
 }
