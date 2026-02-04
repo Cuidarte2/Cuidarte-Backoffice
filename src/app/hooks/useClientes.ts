@@ -34,7 +34,7 @@ const useClientes = create<StoreClienteState>((set, get) => ({
       const token = getTokenFromStorage();
       if (!token) throw new Error("Usuario no autenticado");
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_CUIDARTE_API_URL}/Cliente/ObtenerTodos`,
+        `${process.env.NEXT_PUBLIC_CUIDARTE_API_URL}/Cliente/ObtenerTodos?pagina=${page}`,
         {
           method: "GET",
           headers: {

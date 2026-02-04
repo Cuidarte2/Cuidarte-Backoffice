@@ -14,5 +14,11 @@ export function getTokenFromStorage(): string | null {
 }
 
 export function clearSession() {
+  if (typeof window === 'undefined') return;
 
+  try {
+    localStorage.removeItem('cuidarte_usuario');
+  } catch (err) {
+    console.error('Error al limpiar la sesión:', err);
+  }
 }
