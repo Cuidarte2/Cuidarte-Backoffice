@@ -102,16 +102,27 @@ const useTipoPlan = create<StoreTipoPlanState>((set, get) => ({
           redirect: "follow",
         }
       );
-      if (!response.ok) {
-         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al editar tipo plan");
-      }
-      const data = await response.json();
-      set((state) => ({
-        tiposPlanes: state.tiposPlanes.map((tp) =>
-          tp.id == data.id ? data : tp
-        ),
-      }));
+ if (!response.ok) {
+  const errorText = await response.text();
+  let errorData;
+  try {
+    errorData = errorText ? JSON.parse(errorText) : null;
+  } catch {
+    errorData = null;
+  }
+  throw new Error(errorData?.message || errorText || "Error al editar tipo plan");
+}
+
+const text = await response.text();
+const data = text ? JSON.parse(text) : null;
+
+if (data) {
+  set((state) => ({
+    tiposPlanes: state.tiposPlanes.map((tp) =>
+      tp.id == data.id ? data : tp
+    ),
+  }));
+}
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : "Error desconocido",
