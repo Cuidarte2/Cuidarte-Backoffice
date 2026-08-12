@@ -11,6 +11,7 @@ import {
   EstadoTarea,
   Tarea,
 } from "@/app/types/tareas";
+import { TipoServicio } from "@/app/types/tipoPlan";
 import ClienteSelect from "@/app/components/clienteSelect";
 import FuncionarioSelect from "@/app/components/funcionarioSelect";
 import EstadoSelect from "@/app/components/EstadoSelect";
@@ -103,7 +104,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
           {apiError}
         </Alert>
       </Snackbar>
-      <Stack direction="row" spacing={2} mb={2}>
+      <Stack direction="row" spacing={2} sx={{ mb: 2 }}>
         <Button variant="contained" color="primary" onClick={onVolver}>
           Volver
         </Button>
@@ -198,7 +199,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
           disabled={!editando}
         />
 
-        <Typography variant="h6" mt={4}>
+        <Typography variant="h6" sx={{ mt: 4 }}>
           Servicios asociados
         </Typography>
         {editando ? (
@@ -212,7 +213,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                       ...(formData.servicios || []),
                     ];
                     const tipoSeleccionado = tiposServicios.find(
-                      (ts) => ts.id === id
+                      (ts : TipoServicio) => ts.id === id
                     );
                     if (serviciosActualizados[index].tipoServicio) {
                       serviciosActualizados[index].tipoServicio.id = id;
@@ -306,7 +307,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   <Typography>
                     Nombre del servicio:{" "}
                     {tiposServicios.find(
-                      (ts) => ts.id === servicio.tipoServicio?.id
+                      (ts : TipoServicio) => ts.id === servicio.tipoServicio?.id
                     )?.nombre ?? "Sin nombre"}
                   </Typography>
                   <Typography>Cantidad: {servicio.cantServicios}</Typography>
@@ -315,7 +316,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
             </Stack>
           </>
         )}
-        <Typography variant="h6" mt={4}>
+        <Typography variant="h6" sx={{ mt: 4 }}>
           Servicios extra
         </Typography>
         {editando ? (
@@ -329,7 +330,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                       ...(formData.serviciosExtra || []),
                     ];
                     const tipoSeleccionado = tiposServicios.find(
-                      (ts) => ts.id === id
+                      (ts: TipoServicio) => ts.id === id
                     );
                     if (serviciosActualizados[index].tipoServicio) {
                       serviciosActualizados[index].tipoServicio.id = id;
@@ -423,7 +424,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   <Typography>
                     Nombre del servicio:{" "}
                     {tiposServicios.find(
-                      (ts) => ts.id === servicio.tipoServicio?.id
+                      (ts : TipoServicio) => ts.id === servicio.tipoServicio?.id
                     )?.nombre ?? "Sin nombre"}
                   </Typography>
                   <Typography>Cantidad: {servicio.cantServicios}</Typography>
@@ -431,7 +432,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
                   <Typography>
                     <strong>precio:</strong> $
                     {(tiposServicios.find(
-                      (ts) => ts.id === servicio.tipoServicio?.id
+                      (ts : TipoServicio) => ts.id === servicio.tipoServicio?.id
                     )?.precioHora ?? 0) * servicio.cantServicios}
                   </Typography>
                 </Paper>
@@ -447,7 +448,7 @@ export default function ClienteDetalle({ tarea, onVolver }: Props) {
         />
         <TextField label="ID" value={formData.id} fullWidth disabled />
       </Stack>
-      <Stack direction="row" spacing={2} mt={4}>
+      <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
         {!editando && (
           <Button
             variant="contained"

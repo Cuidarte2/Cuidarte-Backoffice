@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from 'next/font/google';
 import "./globals.css";
-import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
 import ClientLayout from "./ui/root-layout";
 
 const montserrat = Montserrat({
