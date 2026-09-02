@@ -14,7 +14,7 @@ export interface Cliente {
   tipoPlanId: number;
   tipoPlan?: TipoPlan;
   ci: string;
-  responsablePago: string;
+  responsablePagoId: number;
   formaPago: string;
   observaciones: string;
   suscripcion?: Suscripcion;

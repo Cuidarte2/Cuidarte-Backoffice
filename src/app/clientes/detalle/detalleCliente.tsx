@@ -12,6 +12,7 @@ import { es } from 'date-fns/locale';
 import useMensualidad from '@/app/hooks/useMensualidad';
 import { Mensualidad, MensualidadEstado } from '@/app/types/suscripcion';
 import { DataGrid, GridColDef, GridValueGetter } from '@mui/x-data-grid';
+import ClienteSelect from '@/app/components/clienteSelect';
 
 interface Props {
   cliente: Cliente;
@@ -184,14 +185,19 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
           fullWidth
           disabled={!editando}
         />
-        <TextField
-          label="Responsable de pago"
-          type="text"
-          value={formData.responsablePago ?? ''}
-          onChange={handleChange('responsablePago')}
-          fullWidth
-          disabled={!editando}
-        />
+              <ClienteSelect
+                value={formData.responsablePagoId ?? 0}
+                onChange={(c) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    ...(c ? { cliente: c } : {}),
+                    responsablePagoId: c?.id ?? 0,
+                  }))
+      
+      
+                }
+                disabled={!editando}
+              />
         <TextField
           label="Forma de pago"
           type="text"

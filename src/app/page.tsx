@@ -10,6 +10,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FileOpenIcon from '@mui/icons-material/FileOpen';
 import { useTheme } from "@mui/material/styles";
 import TipoServicioPage from "./tipoServicio/TipoServicioPage";
 import TareasPage from "./tareas/TareasPage";
@@ -17,6 +18,7 @@ import ClientesPage from "./clientes/ClientesPage";
 import TipoPlanPage from "./tipoPlan/TipoPlanPage";
 import EquiposPage from "./equipo/EquipoPage";
 import EmpresasPage from "./empresa/EmpresaPage";
+import ImportarExcelPage from "./importarExcel/ImportarExcelPage";
 import { useRouter } from "next/navigation";
 import { getTokenFromStorage } from "@/app/utils/auth";
 import useUsersStore from "@/app/hooks/useUsersStore";
@@ -86,6 +88,7 @@ useEffect(() => {
           "TipoServicio",
           "Empresa",
           "Fondo Portada",
+          "Importar Excel",
           "Logout",
         ].map((item) => (
           <ListItem key={item} disablePadding>
@@ -105,7 +108,9 @@ useEffect(() => {
                   <ApartmentIcon />
                 ) : item === "Fondo Portada" ? (
                   <PhotoSizeSelectActualIcon />
-                ) : (
+                ) : item === "Importar Excel" ? (
+                  <FileOpenIcon />
+                ) :(
                   <LogoutIcon />
                 )}
               </ListItemIcon>
@@ -126,7 +131,7 @@ useEffect(() => {
           }}
         >
           <List>
-            {['Tareas', 'Clientes', 'Equipo', 'TipoPlan', 'TipoServicio','Empresa', 'Fondo Portada', 'Logout'].map((item) => (
+            {['Tareas', 'Clientes', 'Equipo', 'TipoPlan', 'TipoServicio','Empresa', 'Fondo Portada', 'Importar Excel', 'Logout'].map((item) => (
               <ListItem key={item} disablePadding>
                 <ListItemButton onClick={() => setSelectedMenu(item)}>
                   <ListItemIcon>
@@ -144,7 +149,9 @@ useEffect(() => {
                       <ApartmentIcon />
                     ) : item === 'Fondo Portada' ? (
                       <PhotoSizeSelectActualIcon />
-                    )  : (
+                    ) : item === 'Importar Excel' ? (
+                      <FileOpenIcon />
+                    ) : (
                       <LogoutIcon />
                     )}
                   </ListItemIcon>
@@ -173,10 +180,10 @@ useEffect(() => {
         {selectedMenu === 'Equipo' && <EquiposPage />}
         {selectedMenu === 'Empresa' && <EmpresasPage />}
         {selectedMenu === 'Fondo Portada' && <FondoPortadaPage />}
-       {selectedMenu === 'Logout' && (
-  <Typography variant="h4">Cerrando sesión...</Typography>
-)}
-
+        {selectedMenu === 'Importar Excel' && <ImportarExcelPage />}
+        {selectedMenu === 'Logout' && (
+          <Typography variant="h4">Cerrando sesión...</Typography>
+        )}
       </Box>
     </Box>
   );

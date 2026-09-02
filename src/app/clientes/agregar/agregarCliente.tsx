@@ -7,6 +7,7 @@ import { es } from 'date-fns/locale';
 import useClientes from '@/app/hooks/useClientes';
 import TipoPlanSelect from '@/app/components/tipoPlanSelect';
 import { validarCedula } from '@/app/types/cliente';
+import ClienteSelect from '@/app/components/clienteSelect';
 
 export default function ClienteForm() {
   const { addCliente } = useClientes();
@@ -22,7 +23,7 @@ export default function ClienteForm() {
     direccion: string;
     telefono: string;
     celular: string;
-    responsablePago: string;
+    responsablePagoId: number;
     formaPago: string;
     observaciones: string;
     tipoPlanId: number;
@@ -37,7 +38,7 @@ export default function ClienteForm() {
     direccion: '',
     telefono: '',
     celular: '',
-    responsablePago: '',
+    responsablePagoId: -1,
     formaPago: '',
     observaciones: '',
     tipoPlanId: 0,
@@ -54,7 +55,7 @@ export default function ClienteForm() {
     direccion: '',
     telefono: '',
     celular: '',
-    responsablePago: '',
+    responsablePagoId: '',
     formaPago: '',
     observaciones: '',
     tipoPlanId: '',
@@ -92,8 +93,8 @@ export default function ClienteForm() {
       direccion: form.direccion ? "" : "La dirección es requerida.",
       telefono: form.telefono ? "" : "El teléfono es requerido.",
       celular: form.celular ? "" : "El celular es requerido.",
+      responsablePagoId: "",
       tipoPlanId: form.tipoPlanId ? "" : "El tipo de plan es requerido.",
-      responsablePago: form.responsablePago ? "" : "El responsable de pago es requerido.",
       observaciones: form.observaciones ? "" : "Las observaciones son requeridas.",
       formaPago: form.formaPago ? "" : "La forma de pago es requerida.",
       ci:
@@ -217,16 +218,13 @@ export default function ClienteForm() {
           onChange={handleFechaChange}
           slotProps={{ textField: { fullWidth: true } }}
         />
-
-        <TextField
-          label="Responsable de Pago"
-          name="responsablePago"
-          variant="standard"
-              value={form.responsablePago}
-          onChange={handleChange}
-          error={!!errors.responsablePago}
-          helperText={errors.responsablePago}
-        />
+     <ClienteSelect
+              value={form.responsablePagoId ?? null}
+              onChange={(c) => {
+                setForm({ ...form, responsablePagoId: c?.id ?? 0 });
+              }}
+              disabled={false}
+            />
         <TextField
           label="Forma de Pago"
           name="formaPago"
