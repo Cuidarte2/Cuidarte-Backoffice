@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Paper, Typography, Button, TextField, Stack, Snackbar, Alert } from '@mui/material';
 import ConfirmButton from '@/app/components/confirmButton';
+import ClienteRelacionesCards from '@/app/components/clienteRelacionesCards';
 import { Cliente, validarCedula } from '@/app/types/cliente';
 import useClientes from '@/app/hooks/useClientes';
 import TipoPlanSelect from '@/app/components/tipoPlanSelect';
@@ -239,6 +240,7 @@ export default function ClienteDetalle({ cliente, onVolver }: Props) {
             Cargando plan del cliente...
           </Typography>
         )}
+         <ClienteRelacionesCards cliente={formData} />
 
 
         <TextField

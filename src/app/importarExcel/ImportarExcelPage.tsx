@@ -19,10 +19,9 @@ const VisuallyHiddenInput = styled('input')({
     whiteSpace: 'nowrap',
     width: 1,
 });
-const { uploadExcel, error } = useExcelImport();
 export default function ExcelUpload() {
+    const { uploadExcel, error } = useExcelImport();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState(null);
 
     const handleFileChange = async (event:ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +31,8 @@ export default function ExcelUpload() {
     try {
       await uploadExcel(file);
     } catch {
-      // el error ya quedó seteado en el store
+  
+
     } finally {
       event.target.value = "";
     }

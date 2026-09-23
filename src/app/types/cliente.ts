@@ -19,6 +19,8 @@ export interface Cliente {
   observaciones: string;
   suscripcion?: Suscripcion;
   serviciosDisponibles?: Servicio[];
+  responsablePago?: Cliente;
+  clientesACargo?: Cliente[];
 }
 
 
